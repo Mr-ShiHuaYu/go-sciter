@@ -1,27 +1,28 @@
 /*
  * The Sciter Engine of Terra Informatica Software, Inc.
  * http://sciter.com
- * 
+ *
  * The code and information provided "as-is" without
  * warranty of any kind, either expressed or implied.
- * 
+ *
  * (C) 2003-2015, Terra Informatica Software, Inc.
  */
 
 #ifndef __SCITER_X_DEF__
 #define __SCITER_X_DEF__
 
-#include "sciter-x-types.h"
 #include "sciter-x-request.h"
+#include "sciter-x-types.h"
 #include "value.h"
-#ifdef __cplusplus
-  #include "aux-cvt.h"
-  #include <iostream>
-  #include <stdio.h>
-  #include <stdarg.h>
-  #include <wchar.h>
-#endif
 
+#ifdef __cplusplus
+#include "aux-cvt.h"
+#include <iostream>
+#include <stdarg.h>
+#include <stdio.h>
+#include <wchar.h>
+
+#endif
 
 #define HAS_TISCRIPT
 
@@ -29,15 +30,16 @@
  *  Used by SciterDataReadyAsync() function.
  **/
 
-#define  HAS_TISCRIPT // in sciter
+#define HAS_TISCRIPT // in sciter
 
-#include "sciter-x-value.h"
 #include "sciter-x-dom.h"
+#include "sciter-x-value.h"
 
 /**Get name of Sciter window class.
  *
  * \return \b LPCWSTR, name of Sciter window class.
- *         \b NULL if initialization of the engine failed, Direct2D or DirectWrite are not supported on the OS.
+ *         \b NULL if initialization of the engine failed, Direct2D or
+ * DirectWrite are not supported on the OS.
  *
  * Use this function if you wish to create unicode version of Sciter.
  * The returned name can be used in CreateWindow(Ex)W function.
@@ -45,20 +47,25 @@
  **/
 LPCWSTR SCAPI SciterClassName(void);
 
-/**Returns major and minor version of Sciter engine.
-  * \return UINT, hiword (16-bit) contains major number and loword contains minor number;
+/**Returns components of of Sciter engine version vector.
+ * Version is a vector of four components [v0,v1,v2,v3].
+ * \param n, UINT, number in 0 ... 3 range
+ * \return UINT;
  **/
- UINT  SCAPI SciterVersion(SBOOL major);
+UINT SCAPI SciterVersion(UINT n);
 
 /** #SC_LOAD_DATA notification return codes */
-enum SC_LOAD_DATA_RETURN_CODES
-{
+enum SC_LOAD_DATA_RETURN_CODES {
   LOAD_OK = 0,      /**< do default loading if data not set */
   LOAD_DISCARD = 1, /**< discard request completely */
-  LOAD_DELAYED = 2, /**< data will be delivered later by the host application.
-                         Host application must call SciterDataReadyAsync(,,, requestId) on each LOAD_DELAYED request to avoid memory leaks. */
-  LOAD_MYSELF  = 3, /**< you return LOAD_MYSELF result to indicate that your (the host) application took or will take care about HREQUEST in your code completely.
-                         Use sciter-x-request.h[pp] API functions with SCN_LOAD_DATA::requestId handle . */
+  LOAD_DELAYED =
+      2,           /**< data will be delivered later by the host application.
+                        Host application must call SciterDataReadyAsync(,,, requestId) on
+                      each LOAD_DELAYED request to avoid memory leaks. */
+  LOAD_MYSELF = 3, /**< you return LOAD_MYSELF result to indicate that your (the
+                      host) application took or will take care about HREQUEST in
+                      your code completely. Use sciter-x-request.h[pp] API
+                      functions with SCN_LOAD_DATA::requestId handle . */
 };
 
 /**Notifies that Sciter is about to download a referred resource.
@@ -67,17 +74,17 @@ enum SC_LOAD_DATA_RETURN_CODES
  * \return #SC_LOAD_DATA_RETURN_CODES
  *
  * This notification gives application a chance to override built-in loader and
- * implement loading of resources in its own way (for example images can be loaded from
- * database or other resource). To do this set #SCN_LOAD_DATA::outData and
- * #SCN_LOAD_DATA::outDataSize members of SCN_LOAD_DATA. Sciter does not
- * store pointer to this data. You can call #SciterDataReady() function instead
- * of filling these fields. This allows you to free your outData buffer
- * immediately.
-**/
-#define SC_LOAD_DATA       0x01
+ * implement loading of resources in its own way (for example images can be
+ * loaded from database or other resource). To do this set
+ * #SCN_LOAD_DATA::outData and #SCN_LOAD_DATA::outDataSize members of
+ * SCN_LOAD_DATA. Sciter does not store pointer to this data. You can call
+ * #SciterDataReady() function instead of filling these fields. This allows you
+ * to free your outData buffer immediately.
+ **/
+#define SC_LOAD_DATA 0x01
 
-/**This notification indicates that external data (for example image) download process
- * completed.
+/**This notification indicates that external data (for example image) download
+ * process completed.
  *
  * \param lParam #LPSCN_DATA_LOADED
  *
@@ -85,9 +92,10 @@ enum SC_LOAD_DATA_RETURN_CODES
  * this resource has been completely downloaded. Sciter will send this
  * notification asynchronously.
  **/
-#define SC_DATA_LOADED     0x02
+#define SC_DATA_LOADED 0x02
 
-/**This notification is sent when all external data (for example image) has been downloaded.
+/**This notification is sent when all external data (for example image) has been
+ * downloaded.
  *
  * This notification is sent when all external resources required by document
  * have been completely downloaded. Sciter will send this notification
@@ -96,7 +104,6 @@ enum SC_LOAD_DATA_RETURN_CODES
 /* obsolete #define SC_DOCUMENT_COMPLETE 0x03
    use DOCUMENT_COMPLETE DOM event.
   */
-
 
 /**This notification is sent on parsing the document and while processing
  * elements having non empty style.behavior attribute value.
@@ -117,24 +124,22 @@ enum SC_LOAD_DATA_RETURN_CODES
 #define SC_ENGINE_DESTROYED 0x05
 
 /**Posted notification.
- 
+
  * \param lParam #LPSCN_POSTED_NOTIFICATION
  *
  **/
 #define SC_POSTED_NOTIFICATION 0x06
 
+/**This notification is sent when the engine encounters critical rendering
+ error: e.g. DirectX gfx driver error. Most probably bad gfx drivers.
 
-/**This notification is sent when the engine encounters critical rendering error: e.g. DirectX gfx driver error.
-   Most probably bad gfx drivers.
- 
  * \param lParam #LPSCN_GRAPHICS_CRITICAL_FAILURE
  *
  **/
 #define SC_GRAPHICS_CRITICAL_FAILURE 0x07
 
-
-/**This notification is sent when the engine needs keyboard to be present on screen
-   E.g. when <input|text> gets focus
+/**This notification is sent when the engine needs keyboard to be present on
+ screen E.g. when <input|text> gets focus
 
  * \param lParam #LPSCN_KEYBOARD_REQUEST
  *
@@ -142,127 +147,140 @@ enum SC_LOAD_DATA_RETURN_CODES
 #define SC_KEYBOARD_REQUEST 0x08
 
 /**This notification is sent when the engine needs some area to be redrawn
- 
+
  * \param lParam #LPSCN_INVLIDATE_RECT
  *
  **/
 #define SC_INVALIDATE_RECT 0x09
 
+/**This notification is sent when the engine needs some area to be redrawn
+
+ * \param lParam #LPSCN_SET_CURSOR
+ *
+ **/
+#define SC_SET_CURSOR 0x0A
 
 /**Notification callback structure.
  **/
-typedef struct SCITER_CALLBACK_NOTIFICATION
-{
-  UINT code; /**< [in] one of the codes above.*/
+typedef struct SCITER_CALLBACK_NOTIFICATION {
+  UINT code;    /**< [in] one of the codes above.*/
   HWINDOW hwnd; /**< [in] HWINDOW of the window this callback was attached to.*/
 } SCITER_CALLBACK_NOTIFICATION;
 
-typedef SCITER_CALLBACK_NOTIFICATION * LPSCITER_CALLBACK_NOTIFICATION;
+typedef SCITER_CALLBACK_NOTIFICATION *LPSCITER_CALLBACK_NOTIFICATION;
 
-typedef UINT SC_CALLBACK SciterHostCallback( LPSCITER_CALLBACK_NOTIFICATION pns, LPVOID callbackParam );
+typedef UINT SC_CALLBACK SciterHostCallback(LPSCITER_CALLBACK_NOTIFICATION pns,
+                                            LPVOID callbackParam);
 
-typedef SciterHostCallback * LPSciterHostCallback;
-
+typedef SciterHostCallback *LPSciterHostCallback;
 
 /**This structure is used by #SC_LOAD_DATA notification.
  *\copydoc SC_LOAD_DATA
  **/
 
-typedef struct SCN_LOAD_DATA
-{
-    UINT code;                 /**< [in] one of the codes above.*/
-    HWINDOW hwnd;              /**< [in] HWINDOW of the window this callback was attached to.*/
+typedef struct SCN_LOAD_DATA {
+  UINT code;    /**< [in] one of the codes above.*/
+  HWINDOW hwnd; /**< [in] HWINDOW of the window this callback was attached to.*/
 
-    LPCWSTR  uri;              /**< [in] Zero terminated string, fully qualified uri, for example "http://server/folder/file.ext".*/
+  LPCWSTR uri; /**< [in] Zero terminated string, fully qualified uri, for
+                  example "http://server/folder/file.ext".*/
 
-    LPCBYTE  outData;          /**< [in,out] pointer to loaded data to return. if data exists in the cache then this field contain pointer to it*/
-    UINT     outDataSize;      /**< [in,out] loaded data size to return.*/
-    UINT     dataType;         /**< [in] SciterResourceType */
+  LPCBYTE
+  outData; /**< [in,out] pointer to loaded data to return. if data exists in
+              the cache then this field contain pointer to it*/
+  UINT outDataSize; /**< [in,out] loaded data size to return.*/
+  UINT dataType;    /**< [in] SciterResourceType */
 
-    HREQUEST requestId;        /**< [in] request handle that can be used with sciter-x-request API */
+  HREQUEST requestId; /**< [in] request handle that can be used with
+                         sciter-x-request API */
 
-    HELEMENT principal;
-    HELEMENT initiator;
+  HELEMENT principal;
+  HELEMENT initiator;
 } SCN_LOAD_DATA;
 
-typedef SCN_LOAD_DATA*  LPSCN_LOAD_DATA;
+typedef SCN_LOAD_DATA *LPSCN_LOAD_DATA;
 
 /**This structure is used by #SC_DATA_LOADED notification.
  *\copydoc SC_DATA_LOADED
  **/
-typedef struct SCN_DATA_LOADED
-{
-    UINT code;                 /**< [in] one of the codes above.*/
-    HWINDOW hwnd;              /**< [in] HWINDOW of the window this callback was attached to.*/
+typedef struct SCN_DATA_LOADED {
+  UINT code;    /**< [in] one of the codes above.*/
+  HWINDOW hwnd; /**< [in] HWINDOW of the window this callback was attached to.*/
 
-    LPCWSTR  uri;              /**< [in] zero terminated string, fully qualified uri, for example "http://server/folder/file.ext".*/
-    LPCBYTE  data;             /**< [in] pointer to loaded data.*/
-    UINT     dataSize;         /**< [in] loaded data size (in bytes).*/
-    UINT     dataType;         /**< [in] SciterResourceType */
-    UINT     status;           /**< [in]
-                                         status = 0 (dataSize == 0) - unknown error.
-                                         status = 100..505 - http response status, Note: 200 - OK!
-                                         status > 12000 - wininet error code, see ERROR_INTERNET_*** in wininet.h
-                                 */
+  LPCWSTR uri;        /**< [in] zero terminated string, fully qualified uri, for
+                         example "http://server/folder/file.ext".*/
+  LPCBYTE data;       /**< [in] pointer to loaded data.*/
+  UINT dataSize;      /**< [in] loaded data size (in bytes).*/
+  UINT dataType;      /**< [in] SciterResourceType */
+  UINT status;        /**< [in]
+                                status = 0 (dataSize == 0) - unknown error.
+                                status = 100..505 - http response status, Note: 200 -
+                         OK!        status > 12000 - wininet error code, see
+                         ERROR_INTERNET_*** in wininet.h
+                        */
+  HREQUEST requestId; /**< [in] request handle that can be used with
+                         sciter-x-request API */
 } SCN_DATA_LOADED;
 
-typedef SCN_DATA_LOADED * LPSCN_DATA_LOADED;
+typedef SCN_DATA_LOADED *LPSCN_DATA_LOADED;
 
 /**This structure is used by #SC_ATTACH_BEHAVIOR notification.
  *\copydoc SC_ATTACH_BEHAVIOR **/
-typedef struct SCN_ATTACH_BEHAVIOR
-{
-    UINT code;                        /**< [in] one of the codes above.*/
-    HWINDOW hwnd;                     /**< [in] HWINDOW of the window this callback was attached to.*/
+typedef struct SCN_ATTACH_BEHAVIOR {
+  UINT code;    /**< [in] one of the codes above.*/
+  HWINDOW hwnd; /**< [in] HWINDOW of the window this callback was attached to.*/
 
-    HELEMENT element;                 /**< [in] target DOM element handle*/
-    LPCSTR   behaviorName;            /**< [in] zero terminated string, string appears as value of CSS behavior:"???" attribute.*/
+  HELEMENT element;    /**< [in] target DOM element handle*/
+  LPCSTR behaviorName; /**< [in] zero terminated string, string appears as value
+                          of CSS behavior:"???" attribute.*/
 
-    ElementEventProc* elementProc;    /**< [out] pointer to ElementEventProc function.*/
-    LPVOID            elementTag;     /**< [out] tag value, passed as is into pointer ElementEventProc function.*/
+  ElementEventProc
+      *elementProc;  /**< [out] pointer to ElementEventProc function.*/
+  LPVOID elementTag; /**< [out] tag value, passed as is into pointer
+                        ElementEventProc function.*/
 
 } SCN_ATTACH_BEHAVIOR;
-typedef SCN_ATTACH_BEHAVIOR* LPSCN_ATTACH_BEHAVIOR;
+typedef SCN_ATTACH_BEHAVIOR *LPSCN_ATTACH_BEHAVIOR;
 
 /**This structure is used by #SC_ENGINE_DESTROYED notification.
  *\copydoc SC_ENGINE_DESTROYED **/
-typedef struct SCN_ENGINE_DESTROYED
-{
-    UINT code; /**< [in] one of the codes above.*/
-    HWINDOW hwnd; /**< [in] HWINDOW of the window this callback was attached to.*/
+typedef struct SCN_ENGINE_DESTROYED {
+  UINT code;    /**< [in] one of the codes above.*/
+  HWINDOW hwnd; /**< [in] HWINDOW of the window this callback was attached to.*/
 } SCN_ENGINE_DESTROYED;
 
-typedef SCN_ENGINE_DESTROYED* LPSCN_ENGINE_DESTROYED;
+typedef SCN_ENGINE_DESTROYED *LPSCN_ENGINE_DESTROYED;
 
 /**This structure is used by #SC_ENGINE_DESTROYED notification.
  *\copydoc SC_ENGINE_DESTROYED **/
-typedef struct SCN_POSTED_NOTIFICATION
-{
-    UINT      code; /**< [in] one of the codes above.*/
-    HWINDOW   hwnd; /**< [in] HWINDOW of the window this callback was attached to.*/
-    UINT_PTR  wparam;
-    UINT_PTR  lparam;
-    UINT_PTR  lreturn;
+typedef struct SCN_POSTED_NOTIFICATION {
+  UINT code;    /**< [in] one of the codes above.*/
+  HWINDOW hwnd; /**< [in] HWINDOW of the window this callback was attached to.*/
+  UINT_PTR wparam;
+  UINT_PTR lparam;
+  UINT_PTR lreturn;
 } SCN_POSTED_NOTIFICATION;
 
-typedef SCN_POSTED_NOTIFICATION* LPSCN_POSTED_NOTIFICATION;
+typedef SCN_POSTED_NOTIFICATION *LPSCN_POSTED_NOTIFICATION;
 
 /**This structure is used by #SC_GRAPHICS_CRITICAL_FAILURE notification.
  *\copydoc SC_GRAPHICS_CRITICAL_FAILURE **/
-typedef struct SCN_GRAPHICS_CRITICAL_FAILURE
-{
-    UINT      code; /**< [in] = SC_GRAPHICS_CRITICAL_FAILURE */
-    HWINDOW   hwnd; /**< [in] HWINDOW of the window this callback was attached to.*/
+typedef struct SCN_GRAPHICS_CRITICAL_FAILURE {
+  UINT code;    /**< [in] = SC_GRAPHICS_CRITICAL_FAILURE */
+  HWINDOW hwnd; /**< [in] HWINDOW of the window this callback was attached to.*/
 } SCN_GRAPHICS_CRITICAL_FAILURE;
 
-typedef SCN_GRAPHICS_CRITICAL_FAILURE* LPSCN_GRAPHICS_CRITICAL_FAILURE;
+typedef SCN_GRAPHICS_CRITICAL_FAILURE *LPSCN_GRAPHICS_CRITICAL_FAILURE;
 
 /**This structure is used by #SC_KEYBOARD_REQUEST notification.
  *\copydoc SC_KEYBOARD_REQUEST **/
 typedef struct SCN_KEYBOARD_REQUEST {
-  UINT    code; /**< [in] = SC_KEYBOARD_REQUEST */
+  UINT code;    /**< [in] = SC_KEYBOARD_REQUEST */
   HWINDOW hwnd; /**< [in] HWINDOW of the window this callback was attached to.*/
-  UINT    keyboardMode; /**< [in] 0 - hide keyboard, 1 ... type of keyboard, TBD */
+  LPCSTR
+  keyboardType; /**< [in] see:
+                   https://developer.android.com/reference/android/widget/TextView#attr_android:inputType
+                 */
 } SCN_KEYBOARD_REQUEST;
 
 typedef SCN_KEYBOARD_REQUEST *LPSCN_KEYBOARD_REQUEST;
@@ -270,13 +288,23 @@ typedef SCN_KEYBOARD_REQUEST *LPSCN_KEYBOARD_REQUEST;
 /**This structure is used by #SC_INVALIDATE_RECT notification.
  *\copydoc SC_INVALIDATE_RECT **/
 typedef struct SCN_INVALIDATE_RECT {
-  UINT    code; /**< [in] = SC_INVALIDATE_RECT */
+  UINT code;    /**< [in] = SC_INVALIDATE_RECT */
   HWINDOW hwnd; /**< [in] HWINDOW of the window this callback was attached to.*/
-  RECT    invalidRect; /**< [in] cumulative invalid rect.*/
+  RECT invalidRect; /**< [in] cumulative invalid rect.*/
 } SCN_INVALIDATE_RECT;
 
 typedef SCN_INVALIDATE_RECT *LPSCN_INVALIDATE_RECT;
 
+/**This structure is used by #SC_SET_CURSOR notification.
+ *\copydoc SC_SET_CURSOR **/
+typedef struct SCN_SET_CURSOR {
+  UINT code;    /**< [in] = SC_SET_CURSOR */
+  HWINDOW hwnd; /**< [in] HWINDOW of the window this callback was attached to.*/
+  UINT cursorId;    /**< [in] #CURSOR_TYPE, if cursorUrl == NULL */
+  LPCSTR cursorUrl; /**< [in] cursor URL */
+} SCN_SET_CURSOR;
+
+typedef SCN_SET_CURSOR *LPSCN_SET_CURSOR;
 
 #include "sciter-x-behavior.h"
 
@@ -286,66 +314,78 @@ typedef SCN_INVALIDATE_RECT *LPSCN_INVALIDATE_RECT;
  * \param[in] uri \b LPCWSTR, URI of the data requested by Sciter.
  * \param[in] data \b LPBYTE, pointer to data buffer.
  * \param[in] dataLength \b UINT, length of the data in bytes.
- * \return \b SBOOL, TRUE if Sciter accepts the data or \c FALSE if error occured
- * (for example this function was called outside of #SCN_LOAD_DATA request).
+ * \return \b SBOOL, TRUE if Sciter accepts the data or \c FALSE if error
+ * occured (for example this function was called outside of #SCN_LOAD_DATA
+ * request).
  *
  * \warning If used, call of this function MUST be done ONLY while handling
- * SCN_LOAD_DATA request and in the same thread. For asynchronous resource loading
- * use SciterDataReadyAsync
+ * SCN_LOAD_DATA request and in the same thread. For asynchronous resource
+ * loading use SciterDataReadyAsync
  **/
- SBOOL SCAPI SciterDataReady(HWINDOW hwnd,LPCWSTR uri,LPCBYTE data, UINT dataLength);
+SBOOL SCAPI SciterDataReady(HWINDOW hwnd, LPCWSTR uri, LPCBYTE data,
+                            UINT dataLength);
 
-/**Use this function outside of SCN_LOAD_DATA request. This function is needed when you
- * you have your own http client implemented in your application.
+/**Use this function outside of SCN_LOAD_DATA request. This function is needed
+ * when you you have your own http client implemented in your application.
  *
  * \param[in] hwnd \b HWINDOW, Sciter window handle.
  * \param[in] uri \b LPCWSTR, URI of the data requested by Sciter.
  * \param[in] data \b LPBYTE, pointer to data buffer.
  * \param[in] dataLength \b UINT, length of the data in bytes.
  * \param[in] requestId \b LPVOID, SCN_LOAD_DATA requestId, can be NULL.
- * \return \b SBOOL, TRUE if Sciter accepts the data or \c FALSE if error occured
+ * \return \b SBOOL, TRUE if Sciter accepts the data or \c FALSE if error
+ * occured
  **/
 
- SBOOL SCAPI SciterDataReadyAsync(HWINDOW hwnd,LPCWSTR uri, LPCBYTE data, UINT dataLength,
-                                         LPVOID requestId);
+SBOOL SCAPI SciterDataReadyAsync(HWINDOW hwnd, LPCWSTR uri, LPCBYTE data,
+                                 UINT dataLength, LPVOID requestId);
 
 #ifdef WINDOWS
 
 /**Sciter Window Proc.*/
- LRESULT SCAPI SciterProc(HWINDOW hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+OBSOLETE LRESULT SCAPI SciterProc(HWINDOW hwnd, UINT msg, WPARAM wParam,
+                                  LPARAM lParam);
 
 /**Sciter Window Proc without call of DefWindowProc.*/
- LRESULT SCAPI SciterProcND(HWINDOW hwnd, UINT msg, WPARAM wParam, LPARAM lParam, SBOOL* pbHandled);
+LRESULT SCAPI SciterProcND(HWINDOW hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
+                           SBOOL *pbHandled);
 
 #endif
-
 
 /**Load HTML file.
  *
  * \param[in] hWndSciter \b HWINDOW, Sciter window handle.
- * \param[in] url \b LPCWSTR, either absolute URL of HTML file to load. "file://...", "http://...", "res:...", "this://app/..." or absolute file path.
- * \return \b SBOOL, \c TRUE if the text was parsed and loaded successfully, \c FALSE otherwise.
+ * \param[in] url \b LPCWSTR, either absolute URL of HTML file to load.
+ * "file://...", "http://...", "res:...", "this://app/..." or absolute file
+ * path.
+ * \return \b SBOOL, \c TRUE if the text was parsed and loaded successfully, \c
+ * FALSE otherwise.
  **/
- SBOOL SCAPI     SciterLoadFile(HWINDOW hWndSciter, LPCWSTR url);
+SBOOL SCAPI SciterLoadFile(HWINDOW hWndSciter, LPCWSTR url);
 
 /**Load HTML from in memory buffer with base.
  *
  * \param[in] hWndSciter \b HWINDOW, Sciter window handle.
  * \param[in] html \b LPCBYTE, Address of HTML to load.
  * \param[in] htmlSize \b UINT, Length of the array pointed by html parameter.
- * \param[in] baseUrl \b LPCWSTR, base URL. All relative links will be resolved against
- *                                this URL.
- * \return \b SBOOL, \c TRUE if the text was parsed and loaded successfully, FALSE otherwise.
+ * \param[in] baseUrl \b LPCWSTR, base URL. All relative links will be resolved
+ * against this URL.
+ * \return \b SBOOL, \c TRUE if the text was parsed and loaded successfully,
+ * FALSE otherwise.
  **/
- SBOOL SCAPI     SciterLoadHtml(HWINDOW hWndSciter, LPCBYTE html, UINT htmlSize, LPCWSTR baseUrl);
+SBOOL SCAPI SciterLoadHtml(HWINDOW hWndSciter, LPCBYTE html, UINT htmlSize,
+                           LPCWSTR baseUrl);
 
 /**Set \link #SCITER_NOTIFY() notification callback function \endlink.
  *
  * \param[in] hWndSciter \b HWINDOW, Sciter window handle.
- * \param[in] cb \b SCITER_NOTIFY*, \link #SCITER_NOTIFY() callback function \endlink.
- * \param[in] cbParam \b LPVOID, parameter that will be passed to \link #SCITER_NOTIFY() callback function \endlink as vParam paramter.
+ * \param[in] cb \b SCITER_NOTIFY*, \link #SCITER_NOTIFY() callback function
+ * \endlink.
+ * \param[in] cbParam \b LPVOID, parameter that will be passed to \link
+ * #SCITER_NOTIFY() callback function \endlink as vParam paramter.
  **/
- VOID SCAPI     SciterSetCallback(HWINDOW hWndSciter, LPSciterHostCallback cb, LPVOID cbParam);
+VOID SCAPI SciterSetCallback(HWINDOW hWndSciter, LPSciterHostCallback cb,
+                             LPVOID cbParam);
 
 /**Set Master style sheet.
  *
@@ -353,7 +393,7 @@ typedef SCN_INVALIDATE_RECT *LPSCN_INVALIDATE_RECT;
  * \param[in] numBytes \b UINT, number of bytes in utf8.
  **/
 
- SBOOL SCAPI     SciterSetMasterCSS(LPCBYTE utf8, UINT numBytes);
+SBOOL SCAPI SciterSetMasterCSS(LPCBYTE utf8, UINT numBytes);
 
 /**Append Master style sheet.
  *
@@ -362,7 +402,7 @@ typedef SCN_INVALIDATE_RECT *LPSCN_INVALIDATE_RECT;
  *
  **/
 
- SBOOL SCAPI     SciterAppendMasterCSS(LPCBYTE utf8, UINT numBytes);
+SBOOL SCAPI SciterAppendMasterCSS(LPCBYTE utf8, UINT numBytes);
 
 /**Set (reset) style sheet of current document.
  Will reset styles for all elements according to given CSS (utf8)
@@ -372,69 +412,57 @@ typedef SCN_INVALIDATE_RECT *LPSCN_INVALIDATE_RECT;
  * \param[in] numBytes \b UINT, number of bytes in utf8.
  **/
 
- SBOOL SCAPI     SciterSetCSS(HWINDOW hWndSciter, LPCBYTE utf8, UINT numBytes, LPCWSTR baseUrl, LPCWSTR mediaType);
+SBOOL SCAPI SciterSetCSS(HWINDOW hWndSciter, LPCBYTE utf8, UINT numBytes,
+                         LPCWSTR baseUrl, LPCWSTR mediaType);
 
 /**Set media type of this sciter instance.
  *
  * \param[in] hWndSciter \b HWINDOW, Sciter window handle.
  * \param[in] mediaType \b LPCWSTR, media type name.
  *
- * For example media type can be "handheld", "projection", "screen", "screen-hires", etc.
- * By default sciter window has "screen" media type.
+ * For example media type can be "handheld", "projection", "screen",
+ * "screen-hires", etc. By default sciter window has "screen" media type.
  *
- * Media type name is used while loading and parsing style sheets in the engine so
- * you should call this function *before* loading document in it.
+ * Media type name is used while loading and parsing style sheets in the engine
+ * so you should call this function *before* loading document in it.
  *
  **/
 
- SBOOL SCAPI     SciterSetMediaType(HWINDOW hWndSciter, LPCWSTR mediaType);
+SBOOL SCAPI SciterSetMediaType(HWINDOW hWndSciter, LPCWSTR mediaType);
 
 /**Set media variables of this sciter instance.
  *
  * \param[in] hWndSciter \b HWINDOW, Sciter window handle.
- * \param[in] mediaVars \b SCITER_VALUE, map that contains name/value pairs - media variables to be set.
+ * \param[in] mediaVars \b SCITER_VALUE, map that contains name/value pairs -
+ * media variables to be set.
  *
- * For example media type can be "handheld:true", "projection:true", "screen:true", etc.
- * By default sciter window has "screen:true" and "desktop:true"/"handheld:true" media variables.
+ * For example media type can be "handheld:true", "projection:true",
+ * "screen:true", etc. By default sciter window has "screen:true" and
+ * "desktop:true"/"handheld:true" media variables.
  *
- * Media variables can be changed in runtime. This will cause styles of the document to be reset.
+ * Media variables can be changed in runtime. This will cause styles of the
+ * document to be reset.
  *
  **/
 
- SBOOL SCAPI     SciterSetMediaVars(HWINDOW hWndSciter, const SCITER_VALUE *mediaVars);
+SBOOL SCAPI SciterSetMediaVars(HWINDOW hWndSciter,
+                               const SCITER_VALUE *mediaVars);
 
- UINT SCAPI     SciterGetMinWidth(HWINDOW hWndSciter);
- UINT SCAPI     SciterGetMinHeight(HWINDOW hWndSciter, UINT width);
+UINT SCAPI SciterGetMinWidth(HWINDOW hWndSciter);
+UINT SCAPI SciterGetMinHeight(HWINDOW hWndSciter, UINT width);
 
- SBOOL SCAPI     SciterCall(HWINDOW hWnd, LPCSTR functionName, UINT argc, const SCITER_VALUE* argv, SCITER_VALUE* retval);
+SBOOL SCAPI SciterCall(HWINDOW hWnd, LPCSTR functionName, UINT argc,
+                       const SCITER_VALUE *argv, SCITER_VALUE *retval);
 // evalue script in context of current document
- SBOOL SCAPI     SciterEval( HWINDOW hwnd, LPCWSTR script, UINT scriptLength, SCITER_VALUE* pretval);
+SBOOL SCAPI SciterEval(HWINDOW hwnd, LPCWSTR script, UINT scriptLength,
+                       SCITER_VALUE *pretval);
 
 /**Update pending changes in Sciter window.
  *
  * \param[in] hwnd \b HWINDOW, Sciter window handle.
  *
  **/
- VOID SCAPI     SciterUpdateWindow(HWINDOW hwnd);
-
-/** Try to translate message that sciter window is interested in.
- *
- * \param[in,out] lpMsg \b MSG*, address of message structure that was passed before to ::DispatchMessage(), ::PeekMessage().
- *
- * SciterTranslateMessage has the same meaning as ::TranslateMessage() and should be called immediately before it.
- * Example:
- *
- *   if( !SciterTranslateMessage(&msg) )
- *      TranslateMessage(&msg);
- *
- * ATTENTION!: SciterTranslateMessage call is critical for popup elements in MoSciter.
- *             On Desktop versions of the Sciter this function does nothing so can be ommited.
- *
- **/
-
-#ifdef WINDOWS
- SBOOL SCAPI SciterTranslateMessage(MSG* lpMsg);
-#endif
+VOID SCAPI SciterUpdateWindow(HWINDOW hwnd);
 
 /**Set various options.
  *
@@ -444,47 +472,163 @@ typedef SCN_INVALIDATE_RECT *LPSCN_INVALIDATE_RECT;
  *
  **/
 
-enum SCRIPT_RUNTIME_FEATURES
-{
+typedef enum SCRIPT_RUNTIME_FEATURES {
   ALLOW_FILE_IO = 0x00000001,
   ALLOW_SOCKET_IO = 0x00000002,
   ALLOW_EVAL = 0x00000004,
-  ALLOW_SYSINFO = 0x00000008
-};
+  ALLOW_SYSINFO = 0x00000008,
+  ALLOW_CMODULES = 0x00000010
+} SCRIPT_RUNTIME_FEATURES;
 
-enum SCITER_RT_OPTIONS
-{
-   SCITER_SMOOTH_SCROLL = 1,      // value:TRUE - enable, value:FALSE - disable, enabled by default
-   SCITER_CONNECTION_TIMEOUT = 2, // value: milliseconds, connection timeout of http client
-   SCITER_HTTPS_ERROR = 3,        // value: 0 - drop connection, 1 - use builtin dialog, 2 - accept connection silently
-   SCITER_FONT_SMOOTHING = 4,     // value: 0 - system default, 1 - no smoothing, 2 - std smoothing, 3 - clear type
+typedef enum SCITER_RT_OPTIONS {
+  SCITER_SMOOTH_SCROLL =
+      1, // value:TRUE - enable, value:FALSE - disable, enabled by default
+  SCITER_CONNECTION_TIMEOUT =
+      2, // value: milliseconds, connection timeout of http client
+  SCITER_HTTPS_ERROR = 3, // value: 0 - drop connection, 1 - use builtin dialog,
+                          // 2 - accept connection silently
+  SCITER_FONT_SMOOTHING = 4, // value: 0 - system default, 1 - no smoothing, 2 -
+                             // std smoothing, 3 - clear type
 
-   SCITER_TRANSPARENT_WINDOW = 6, // Windows Aero support, value:
-                                  // 0 - normal drawing,
-                                  // 1 - window has transparent background after calls DwmExtendFrameIntoClientArea() or DwmEnableBlurBehindWindow().
-   SCITER_SET_GPU_BLACKLIST  = 7, // hWnd = NULL,
-                                  // value = LPCBYTE, json - GPU black list, see: gpu-blacklist.json resource.
-   SCITER_SET_SCRIPT_RUNTIME_FEATURES = 8, // value - combination of SCRIPT_RUNTIME_FEATURES flags.
-   SCITER_SET_GFX_LAYER = 9,      // hWnd = NULL, value - GFX_LAYER
-   SCITER_SET_DEBUG_MODE = 10,    // hWnd, value - TRUE/FALSE
-   SCITER_SET_UX_THEMING = 11,    // hWnd = NULL, value - SBOOL, TRUE - the engine will use "unisex" theme that is common for all platforms. 
-                                  // That UX theme is not using OS primitives for rendering input elements. Use it if you want exactly
-                                  // the same (modulo fonts) look-n-feel on all platforms.
+  SCITER_TRANSPARENT_WINDOW =
+      6, // Windows Aero support, value:
+         // 0 - normal drawing,
+         // 1 - window has transparent background after calls
+         // DwmExtendFrameIntoClientArea() or DwmEnableBlurBehindWindow().
+  SCITER_SET_GPU_BLACKLIST = 7, // hWnd = NULL,
+                                // value = LPCBYTE, json - GPU black list, see:
+                                // gpu-blacklist.json resource.
+  SCITER_SET_SCRIPT_RUNTIME_FEATURES =
+      8, // value - combination of SCRIPT_RUNTIME_FEATURES flags.
+  SCITER_SET_GFX_LAYER = 9,   // hWnd = NULL, value - GFX_LAYER
+  SCITER_SET_DEBUG_MODE = 10, // hWnd, value - TRUE/FALSE
+  SCITER_SET_UX_THEMING =
+      11, // hWnd = NULL, value - SBOOL, TRUE - the engine will use "unisex"
+          // theme that is common for all platforms. That UX theme is not using
+          // OS primitives for rendering input elements. Use it if you want
+          // exactly the same (modulo fonts) look-n-feel on all platforms.
 
-   SCITER_ALPHA_WINDOW  = 12,     //  hWnd, value - TRUE/FALSE - window uses per pixel alpha (e.g. WS_EX_LAYERED/UpdateLayeredWindow() window)
-   
-   SCITER_SET_INIT_SCRIPT = 13,   // hWnd - N/A , value LPCSTR - UTF-8 encoded script source to be loaded into each view before any other script execution.
-                                  //                             The engine copies this string inside the call.
+  SCITER_ALPHA_WINDOW =
+      12, //  hWnd, value - TRUE/FALSE - window uses per pixel alpha (e.g.
+          //  WS_EX_LAYERED/UpdateLayeredWindow() window)
 
-   SCITER_SET_MAIN_WINDOW = 14,   //  hWnd, value - TRUE/FALSE - window is main, will destroy all other dependent windows on close
+  SCITER_SET_INIT_SCRIPT =
+      13, // hWnd - N/A , value LPCSTR - UTF-8 encoded script source to be
+          // loaded into each view before any other script execution.
+          //                             The engine copies this string inside
+          //                             the call.
 
-   SCITER_SET_MAX_HTTP_DATA_LENGTH = 15, // hWnd - N/A , value - max request length in megabytes (1024*1024 bytes)
+  SCITER_SET_MAIN_WINDOW =
+      14, //  hWnd, value - TRUE/FALSE - window is main, will destroy all other
+          //  dependent windows on close
 
-   SCITER_SET_PX_AS_DIP = 16, // value 1 - 1px in CSS is treated as 1dip, value 0 - default behavior - 1px is a physical pixel 
+  SCITER_SET_MAX_HTTP_DATA_LENGTH = 15, // hWnd - N/A , value - max request
+                                        // length in megabytes (1024*1024 bytes)
 
-};
+  SCITER_SET_PX_AS_DIP = 16, // value 1 - 1px in CSS is treated as 1dip, value 0
+                             // - default behavior - 1px is a physical pixel
 
- SBOOL SCAPI SciterSetOption(HWINDOW hWnd, UINT option, UINT_PTR value );
+  SCITER_ENABLE_UIAUTOMATION =
+      17, // hWnd - N/A , TRUE/FALSE, enables UIAutomation support.
+
+  SCITER_USE_INTERNAL_HTTP_CLIENT =
+      18, // hWnd - N/A , TRUE - use internal HTTP client
+          //              FALSE - use system HTTP client (on platforms that has
+          //              it: Win,Mac,Lin)
+  SCITER_EXTENDED_TOUCHPAD_SUPPORT =
+      19, // hWnd - N/A , TRUE/FALSE, enables/disables extended touchpad
+          // support, TRUE by default
+
+  SCITER_ENABLE_DIRECT_COMPOSITION =
+      20, // hWnd - N/A , TRUE/FALSE, enables DirectComposition (Vista+ only).
+          //        Set it to FALSE if window will host child windows.
+  SCITER_SET_ROOT_CA = 21, // hWnd - N/A , const char* certificates, in format
+                           // acceptable by mbedtls_x509_crt_parse()
+
+} SCITER_RT_OPTIONS;
+
+SBOOL SCAPI SciterSetOption(HWINDOW hWnd, UINT option, UINT_PTR value);
+
+/** Application related operations */
+
+typedef enum SCITER_APP_CMD {
+  SCITER_APP_STOP = 0, /// reuest to quit message pump loop
+  SCITER_APP_LOOP =
+      1, /// run message pump loop until SCITER_APP_STOP or main window closure
+  SCITER_APP_INIT =
+      2, /// pass argc/argv to application: p1 - argc, p2 - CHAR** argv
+  SCITER_APP_SHUTDOWN = 3, /// free resources of the application
+  SCITER_APP_RUN = 4, /// scapp mode: load JS and run message pump loop until
+                      /// SCITER_APP_STOP or main window closure, p1 - JS url,
+                      /// p2 - 0 or SciterPrimordialLoader;
+  SCITER_APP_LOOP_ITERATION =
+      6, /// does single message pump loop iteration, SCITER_APP_LOOP is
+         /// essentially this: while( SciterExec(SCITER_APP_LOOP_ITERATION,0,0)
+         /// );
+  SCITER_APP_LOOP_HEARTBIT =
+      7, /// checks outstanding tasks and timers,
+         /// like SCITER_APP_LOOP_ITERATION but without message processing
+} SCITER_APP_CMD;
+
+/**
+ * Sciter "Primordial" Loader used by SCITER_APP_RUN
+ */
+typedef SBOOL SciterPrimordialLoader(const WCHAR *url, LPCBYTE *out_pb,
+                                     UINT *out_cb);
+
+/** Perform application related operation
+ *
+ * \param[in] appCmd \b SCITER_APP_CMD, application wide command
+ * \param[in] p1 \b UINT_PTR, first parameter
+ * \param[in] p2 \b UINT_PTR, second parameter
+ *
+ * Note: SciterExec(SCITER_APP_LOOP,0,0) will not return until main window is
+ * present or SCITER_APP_STOP received
+ *
+ **/
+
+INT_PTR SCAPI SciterExec(UINT appCmd /*SCITER_APP_CMD*/, UINT_PTR p1,
+                         UINT_PTR p2);
+
+typedef enum SCITER_WINDOW_CMD {
+  SCITER_WINDOW_SET_STATE = 1, // p1 - SCITER_WINDOW_STATE, p2 - N/A
+  SCITER_WINDOW_GET_STATE =
+      2, // p1 - N/A , p2 - N/A, returns SCITER_WINDOW_STATE
+  SCITER_WINDOW_ACTIVATE = 3, // p1 - BOOL, true - bring_to_front , p2 - N/A
+  SCITER_WINDOW_SET_PLACEMENT =
+      4, // p1 - const POINT*, position, p2 const SIZE* - dimension, in ppx,
+         // either one can be null
+  SCITER_WINDOW_GET_PLACEMENT = 5, // p1 - POINT*, position, p2 SIZE* -
+                                   // dimension, in ppx, either one can be null
+
+  SCITER_WINDOW_GET_VULKAN_ENVIRONMENT =
+      20, // p1 - &SciterVulkanEnvironment, p2 - sizeof(SciterVulkanEnvironment)
+  SCITER_WINDOW_GET_VULKAN_CONTEXT =
+      21, // p1 - &SciterVulkanContext, p2 - sizeof(SciterVulkanContext)
+  SCITER_WINDOW_SET_VULKAN_BRIDGE =
+      22, // p1 - SciterWindowVulkanBridge*, p2 - N/A
+} SCITER_WINDOW_CMD;
+
+typedef enum SCITER_WINDOW_STATE {
+  SCITER_WINDOW_STATE_CLOSED = 0, // not a window
+  SCITER_WINDOW_STATE_HIDDEN = 1,
+  SCITER_WINDOW_STATE_SHOWN = 2,
+  SCITER_WINDOW_STATE_MINIMIZED = 3,
+  SCITER_WINDOW_STATE_MAXIMIZED = 4,
+  SCITER_WINDOW_STATE_FULL_SCREEN = 5,
+} SCITER_WINDOW_STATE;
+
+/** Perform window related operation
+ *
+ * \param[in] windowCmd \b SCITER_WINDOW_CMD, window related command
+ * \param[in] p1 \b UINT_PTR, first parameter
+ * \param[in] p2 \b UINT_PTR, second parameter
+ *
+ **/
+
+INT_PTR SCAPI SciterWindowExec(HWINDOW hwnd,
+                               UINT windowCmd /*SCITER_WINDOW_CMD*/,
+                               UINT_PTR p1, UINT_PTR p2);
 
 /**Get current pixels-per-inch metrics of the Sciter window
  *
@@ -494,7 +638,7 @@ enum SCITER_RT_OPTIONS
  *
  **/
 
- VOID SCAPI SciterGetPPI(HWINDOW hWndSciter, UINT* px, UINT* py);
+VOID SCAPI SciterGetPPI(HWINDOW hWndSciter, UINT *px, UINT *py);
 
 /**Get "expando" of the view object
  *
@@ -503,22 +647,22 @@ enum SCITER_RT_OPTIONS
  *
  **/
 
- SBOOL SCAPI SciterGetViewExpando( HWINDOW hwnd, VALUE* pval );
+SBOOL SCAPI SciterGetViewExpando(HWINDOW hwnd, VALUE *pval);
 
-typedef struct URL_DATA
-{
-  LPCSTR             requestedUrl;   // requested URL
-  LPCSTR             realUrl;        // real URL data arrived from (after possible redirections)
-  SciterResourceType requestedType;  // requested data category: html, script, image, etc.
-  LPCSTR             httpHeaders;    // if any
-  LPCSTR             mimeType;       // mime type reported by server (if any)
-  LPCSTR             encoding;       // data encoding (if any)
-  LPCBYTE            data;
-  UINT              dataLength;
+typedef struct URL_DATA {
+  LPCSTR requestedUrl; // requested URL
+  LPCSTR realUrl; // real URL data arrived from (after possible redirections)
+  SciterResourceType
+      requestedType;  // requested data category: html, script, image, etc.
+  LPCSTR httpHeaders; // if any
+  LPCSTR mimeType;    // mime type reported by server (if any)
+  LPCSTR encoding;    // data encoding (if any)
+  LPCBYTE data;
+  UINT dataLength;
 } URL_DATA;
 
-typedef VOID SC_CALLBACK URL_DATA_RECEIVER( const URL_DATA* pUrlData, LPVOID param );
-
+typedef VOID SC_CALLBACK URL_DATA_RECEIVER(const URL_DATA *pUrlData,
+                                           LPVOID param);
 
 /** Get url resource data received by the engine
  *  Note: this function really works only if the engine is set to debug mode.
@@ -526,48 +670,60 @@ typedef VOID SC_CALLBACK URL_DATA_RECEIVER( const URL_DATA* pUrlData, LPVOID par
  * \param[in] hWndSciter \b HWINDOW, Sciter window handle.
  * \param[in] receiver \b URL_DATA_RECEIVER, address of reciver callback.
  * \param[in] param \b LPVOID, param passed to callback as it is.
- * \param[in] url \b LPCSTR, optional, url of the data. If not provided the engine will list all loaded resources
- * \return \b SBOOL, \c TRUE if receiver is called at least once, FALSE otherwise.
+ * \param[in] url \b LPCSTR, optional, url of the data. If not provided the
+ * engine will list all loaded resources
+ * \return \b SBOOL, \c TRUE if receiver is called at least once, FALSE
+ * otherwise.
  *
  **/
 
- SBOOL SCAPI SciterEnumUrlData(HWINDOW hWndSciter, URL_DATA_RECEIVER* receiver, LPVOID param, LPCSTR url);
-
+SBOOL SCAPI SciterEnumUrlData(HWINDOW hWndSciter, URL_DATA_RECEIVER *receiver,
+                              LPVOID param, LPCSTR url);
 
 #ifdef WINDOWS
 
 /**Creates instance of Sciter Engine on window controlled by DirectX
-*
-* \param[in] hwnd \b HWINDOW, window handle to create Sciter on.
-* \param[in] IDXGISwapChain \b pSwapChain,  reference of IDXGISwapChain created on the window.
-* \return \b SBOOL, \c TRUE if engine instance is created, FALSE otherwise.
-*
-**/
+ *
+ * \param[in] hwnd \b HWINDOW, window handle to create Sciter on.
+ * \param[in] IDXGISwapChain \b pSwapChain,  reference of IDXGISwapChain created
+ * on the window.
+ * \return \b SBOOL, \c TRUE if engine instance is created, FALSE otherwise.
+ *
+ **/
 
-SBOOL SCAPI SciterCreateOnDirectXWindow(HWINDOW hwnd, IUnknown* pSwapChain); // IDXGISwapChain
+SBOOL SCAPI SciterCreateOnDirectXWindow(HWINDOW hwnd,
+                                        IUnknown *pSwapChain); // IDXGISwapChain
 
 /**Renders content of the document loaded into the window
-* Optionally allows to render parts of document (separate DOM elements) as layers
-*
-* \param[in] hwnd \b HWINDOW, window handle to create Sciter on.
-* \param[in] HELEMENT \b elementToRenderOrNull,  html element to render. If NULL then the engine renders whole document.
-* \param[in] SBOOL \b frontLayer,  TRUE if elementToRenderOrNull is not NULL and this is the topmost layer.
-* \return \b SBOOL, \c TRUE if layer was rendered successfully.
-*
-**/
-SBOOL SCAPI SciterRenderOnDirectXWindow(HWINDOW hwnd, HELEMENT elementToRenderOrNull /* = NULL*/, SBOOL frontLayer /* = FALSE*/);
+ * Optionally allows to render parts of document (separate DOM elements) as
+ * layers
+ *
+ * \param[in] hwnd \b HWINDOW, window handle to create Sciter on.
+ * \param[in] HELEMENT \b elementToRenderOrNull,  html element to render. If
+ * NULL then the engine renders whole document.
+ * \param[in] SBOOL \b frontLayer,  TRUE if elementToRenderOrNull is not NULL
+ * and this is the topmost layer.
+ * \return \b SBOOL, \c TRUE if layer was rendered successfully.
+ *
+ **/
+SBOOL SCAPI SciterRenderOnDirectXWindow(
+    HWINDOW hwnd, HELEMENT elementToRenderOrNull /* = NULL*/,
+    SBOOL frontLayer /* = FALSE*/);
 
 /**Renders content of the document loaded to DXGI texture
-* Optionally allows to render parts of document (separate DOM elements) as layers
-*
-* \param[in] HWINDOW \b hwnd, window handle to create Sciter on.
-* \param[in] HELEMENT \b elementToRenderOrNull,  html element to render. If NULL then the engine renders whole document.
-* \param[in] IDXGISurface \b surface, DirectX 2D texture to render in.
-* \return \b SBOOL, \c TRUE if layer was rendered successfully.
-*
-**/
-SBOOL SCAPI SciterRenderOnDirectXTexture(HWINDOW hwnd, HELEMENT elementToRenderOrNull, IUnknown* surface); // IDXGISurface
-
+ * Optionally allows to render parts of document (separate DOM elements) as
+ * layers
+ *
+ * \param[in] HWINDOW \b hwnd, window handle to create Sciter on.
+ * \param[in] HELEMENT \b elementToRenderOrNull,  html element to render. If
+ * NULL then the engine renders whole document.
+ * \param[in] IDXGISurface \b surface, DirectX 2D texture to render in.
+ * \return \b SBOOL, \c TRUE if layer was rendered successfully.
+ *
+ **/
+SBOOL SCAPI SciterRenderOnDirectXTexture(HWINDOW hwnd,
+                                         HELEMENT elementToRenderOrNull,
+                                         IUnknown *surface); // IDXGISurface
 
 /**Render document to ID2D1RenderTarget
  *
@@ -577,31 +733,38 @@ SBOOL SCAPI SciterRenderOnDirectXTexture(HWINDOW hwnd, HELEMENT elementToRenderO
  *
  **/
 
- SBOOL SCAPI SciterRenderD2D(HWINDOW hWndSciter, IUnknown* /*ID2D1RenderTarget**/ prt);
+SBOOL SCAPI SciterRenderD2D(HWINDOW hWndSciter,
+                            IUnknown * /*ID2D1RenderTarget**/ prt);
 
 /** Obtain pointer to ID2D1Factory instance used by the engine:
  *
- * \param[in] ID2D1Factory \b **ppf, address of variable receiving pointer of ID2D1Factory.
- * \return \b SBOOL, \c TRUE if parameters are valid and *ppf was set by valid pointer.
+ * \param[in] ID2D1Factory \b **ppf, address of variable receiving pointer of
+ * ID2D1Factory.
+ * \return \b SBOOL, \c TRUE if parameters are valid and *ppf was set by valid
+ * pointer.
  *
- * NOTE 1: ID2D1Factory returned by the function is "add-refed" - it is your responsibility to call Release() on it.
- * NOTE 2: *ppf variable shall be initialized to NULL before calling the function.
+ * NOTE 1: ID2D1Factory returned by the function is "add-refed" - it is your
+ * responsibility to call Release() on it. NOTE 2: *ppf variable shall be
+ * initialized to NULL before calling the function.
  *
  **/
 
- SBOOL SCAPI     SciterD2DFactory(IUnknown** /*ID2D1Factory ***/ ppf);
+SBOOL SCAPI SciterD2DFactory(IUnknown ** /*ID2D1Factory ***/ ppf);
 
 /** Obtain pointer to IDWriteFactory instance used by the engine:
  *
- * \param[in] IDWriteFactory \b **ppf, address of variable receiving pointer of IDWriteFactory.
- * \return \b SBOOL, \c TRUE if parameters are valid and *ppf was set by valid pointer.
+ * \param[in] IDWriteFactory \b **ppf, address of variable receiving pointer of
+ * IDWriteFactory.
+ * \return \b SBOOL, \c TRUE if parameters are valid and *ppf was set by valid
+ * pointer.
  *
- * NOTE 1: IDWriteFactory returned by the function is "add-refed" - it is your responsibility to call Release() on it.
- * NOTE 2: *ppf variable shall be initialized to NULL before calling the function.
+ * NOTE 1: IDWriteFactory returned by the function is "add-refed" - it is your
+ * responsibility to call Release() on it. NOTE 2: *ppf variable shall be
+ * initialized to NULL before calling the function.
  *
  **/
 
- SBOOL SCAPI     SciterDWFactory(IUnknown** /*IDWriteFactory ***/ ppf);
+SBOOL SCAPI SciterDWFactory(IUnknown ** /*IDWriteFactory ***/ ppf);
 
 #endif
 
@@ -609,14 +772,14 @@ SBOOL SCAPI SciterRenderOnDirectXTexture(HWINDOW hwnd, HELEMENT elementToRenderO
  *
  * \pcaps[in] LPUINT \b pcaps, address of variable receiving:
  *                             0 - no compatible graphics found;
- *                             1 - compatible graphics found but Direct2D will use WARP driver (software emulation);
- *                             2 - Direct2D will use hardware backend (best performance);
+ *                             1 - compatible graphics found but Direct2D will
+ * use WARP driver (software emulation); 2 - Direct2D will use hardware backend
+ * (best performance);
  * \return \b SBOOL, \c TRUE if pcaps is valid pointer.
  *
  **/
 
- SBOOL SCAPI     SciterGraphicsCaps(LPUINT pcaps);
-
+SBOOL SCAPI SciterGraphicsCaps(LPUINT pcaps);
 
 /** Set sciter home url.
  *  home url is used for resolving sciter: urls
@@ -629,29 +792,35 @@ SBOOL SCAPI SciterRenderOnDirectXTexture(HWINDOW hwnd, HELEMENT elementToRenderO
  *
  **/
 
- SBOOL SCAPI     SciterSetHomeURL(HWINDOW hWndSciter, LPCWSTR baseUrl);
+SBOOL SCAPI SciterSetHomeURL(HWINDOW hWndSciter, LPCWSTR baseUrl);
 
 #if defined(OSX)
-   HWINDOW SCAPI  SciterCreateNSView( LPRECT frame ); // returns NSView*
-  typedef LPVOID SciterWindowDelegate; // Obj-C id, NSWindowDelegate and NSResponder
+HWINDOW SCAPI SciterCreateNSView(LPRECT frame); // returns NSView*
+typedef LPVOID
+    SciterWindowDelegate; // Obj-C id, NSWindowDelegate and NSResponder
 #elif defined(WINDOWS)
-  typedef LRESULT SC_CALLBACK SciterWindowDelegate(HWINDOW hwnd, UINT msg, WPARAM wParam, LPARAM lParam, LPVOID pParam, SBOOL* handled);
+typedef LRESULT SC_CALLBACK SciterWindowDelegate(HWINDOW hwnd, UINT msg,
+                                                 WPARAM wParam, LPARAM lParam,
+                                                 LPVOID pParam, SBOOL *handled);
 #elif defined(LINUX)
-  typedef LPVOID SciterWindowDelegate;
+typedef LPVOID SciterWindowDelegate;
 #endif
 
 enum SCITER_CREATE_WINDOW_FLAGS {
-   SW_CHILD      = (1 << 0), // child window only, if this flag is set all other flags ignored
-   SW_TITLEBAR   = (1 << 1), // toplevel window, has titlebar
-   SW_RESIZEABLE = (1 << 2), // has resizeable frame
-   SW_TOOL       = (1 << 3), // is tool window
-   SW_CONTROLS   = (1 << 4), // has minimize / maximize buttons
-   SW_GLASSY     = (1 << 5), // glassy window - supports "Acrylic" on Windows and "Vibrant" on MacOS. 
-   SW_ALPHA      = (1 << 6), // transparent window ( e.g. WS_EX_LAYERED on Windows )
-   SW_MAIN       = (1 << 7), // main window of the app, will terminate the app on close
-   SW_POPUP      = (1 << 8), // the window is created as topmost window.
-   SW_ENABLE_DEBUG = (1 << 9), // make this window inspector ready
-   SW_OWNS_VM      = (1 << 10), // it has its own script VM
+  SW_CHILD =
+      (1
+       << 0), // child window only, if this flag is set all other flags ignored
+  SW_TITLEBAR = (1 << 1),   // toplevel window, has titlebar
+  SW_RESIZEABLE = (1 << 2), // has resizeable frame
+  SW_TOOL = (1 << 3),       // is tool window
+  SW_CONTROLS = (1 << 4),   // has minimize / maximize buttons
+  SW_GLASSY = (1 << 5),     // glassy window - supports "Acrylic" on Windows and
+                            // "Vibrant" on MacOS.
+  SW_ALPHA = (1 << 6), // transparent window ( e.g. WS_EX_LAYERED on Windows )
+  SW_MAIN = (1 << 7), // main window of the app, will terminate the app on close
+  SW_POPUP = (1 << 8),        // the window is created as topmost window.
+  SW_ENABLE_DEBUG = (1 << 9), // make this window inspector ready
+  SW_OWNS_VM = (1 << 10),     // it has its own script VM
 };
 
 #if !defined(WINDOWLESS)
@@ -661,16 +830,15 @@ enum SCITER_CREATE_WINDOW_FLAGS {
  *
  * \param[in] creationFlags \b SCITER_CREATE_WINDOW_FLAGS, creation flags.
  * \param[in] frame \b LPRECT, window frame position and size.
- * \param[in] delegate \b SciterWindowDelegate, either partial WinProc implementation or thing implementing NSWindowDelegate protocol.
- * \param[in] delegateParam \b LPVOID, optional param passed to SciterWindowDelegate.
+ * \param[in] delegate \b SciterWindowDelegate, either partial WinProc
+ * implementation or thing implementing NSWindowDelegate protocol.
+ * \param[in] delegateParam \b LPVOID, optional param passed to
+ * SciterWindowDelegate.
  * \param[in] parent \b HWINDOW, optional parent window.
  *
  **/
- HWINDOW SCAPI  SciterCreateWindow( UINT creationFlags,
-                                            LPRECT frame,
-                                            SciterWindowDelegate* delegate,
-                                            LPVOID delegateParam,
-                                            HWINDOW parent);
+HWINDOW SCAPI SciterCreateWindow(UINT creationFlags, LPRECT frame, LPVOID,
+                                 LPVOID, HWINDOW parent);
 
 #endif
 
@@ -681,27 +849,27 @@ enum SCITER_CREATE_WINDOW_FLAGS {
  *
  **/
 
-enum OUTPUT_SUBSYTEMS
-{
-   OT_DOM = 0,       // html parser & runtime
-   OT_CSSS,          // csss! parser & runtime
-   OT_CSS,           // css parser
-   OT_TIS,           // TIS parser & runtime
-};
-enum OUTPUT_SEVERITY
-{
+typedef enum OUTPUT_SUBSYTEMS {
+  OT_DOM = 0, // html parser & runtime
+  OT_CSSS,    // csss! parser & runtime
+  OT_CSS,     // css parser
+  OT_TIS,     // TIS parser & runtime (deprecated, kept for compatibility)
+  OT_SCRIPT,  // JS parser & runtime
+} OUTPUT_SUBSYTEMS;
+enum OUTPUT_SEVERITY {
   OS_INFO,
   OS_WARNING,
   OS_ERROR,
 };
 
-typedef VOID (SC_CALLBACK* DEBUG_OUTPUT_PROC)(LPVOID param, UINT subsystem /*OUTPUT_SUBSYTEMS*/, UINT severity, LPCWSTR text, UINT text_length);
+typedef VOID(SC_CALLBACK *DEBUG_OUTPUT_PROC)(
+    LPVOID param, UINT subsystem /*OUTPUT_SUBSYTEMS*/, UINT severity,
+    LPCWSTR text, UINT text_length);
 
- VOID SCAPI SciterSetupDebugOutput(
-                HWINDOW                  hwndOrNull,// HWINDOW or null if this is global output handler
-                LPVOID                param,     // param to be passed "as is" to the pfOutput
-                DEBUG_OUTPUT_PROC     pfOutput   // output function, output stream alike thing.
-                );
+VOID SCAPI SciterSetupDebugOutput(
+    HWINDOW hwndOrNull, // HWINDOW or null if this is global output handler
+    LPVOID param,       // param to be passed "as is" to the pfOutput
+    DEBUG_OUTPUT_PROC pfOutput // output function, output stream alike thing.
+);
 
 #endif
-

@@ -73,9 +73,9 @@ func ClassName() string {
 func Version(major bool) uint {
 	var v C.UINT
 	if major {
-		v = C.SciterVersion(C.SBOOL(1))
+		v = C.SciterVersion(C.UINT(1))
 	} else {
-		v = C.SciterVersion(C.SBOOL(0))
+		v = C.SciterVersion(C.UINT(0))
 	}
 	return uint(v)
 }
