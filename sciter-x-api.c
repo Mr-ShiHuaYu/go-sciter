@@ -170,6 +170,30 @@ ISciterAPI *_SAPI(ISciterAPI *ext) {
       }
     }
   }
+
+  if (_api) {
+    UINT v0 = _api->SciterVersion(0);
+    UINT v1 = _api->SciterVersion(1);
+    UINT v2 = _api->SciterVersion(2);
+    UINT v3 = _api->SciterVersion(3);
+    if (v0 != SCITER_VERSION_0 || v1 != SCITER_VERSION_1 ||
+        v2 != SCITER_VERSION_2 || v3 != SCITER_VERSION_3) {
+      TCHAR szMsg[512];
+      wsprintf(szMsg,
+               TEXT("Sciter DLL version mismatch!\r\n\r\n")
+               TEXT("Header expects: %u.%u.%u.%u\r\n")
+               TEXT("DLL reports   : %u.%u.%u.%u\r\n\r\n")
+               TEXT("Please use sciter.dll version %u.%u.%u.%u"),
+               (UINT)SCITER_VERSION_0, (UINT)SCITER_VERSION_1,
+               (UINT)SCITER_VERSION_2, (UINT)SCITER_VERSION_3, v0, v1, v2, v3,
+               (UINT)SCITER_VERSION_0, (UINT)SCITER_VERSION_1,
+               (UINT)SCITER_VERSION_2, (UINT)SCITER_VERSION_3);
+      MessageBox(NULL, szMsg, TEXT("GoSciterXP ERROR - Version Mismatch"),
+                 MB_OK | MB_ICONSTOP);
+      _api = NULL;
+    }
+  }
+
   assert(_api);
   if (!_api) {
     //::MessageBox(NULL, TEXT("Sciter engine not found,

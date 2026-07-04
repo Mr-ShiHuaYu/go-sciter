@@ -464,6 +464,27 @@ SBOOL SCAPI SciterEval(HWINDOW hwnd, LPCWSTR script, UINT scriptLength,
  **/
 VOID SCAPI SciterUpdateWindow(HWINDOW hwnd);
 
+/** Try to translate message that sciter window is interested in.
+ *
+ * \param[in,out] lpMsg \b MSG*, address of message structure that was passed
+ * before to ::DispatchMessage(), ::PeekMessage().
+ *
+ * SciterTranslateMessage has the same meaning as ::TranslateMessage() and
+ * should be called immediately before it. Example:
+ *
+ *   if( !SciterTranslateMessage(&msg) )
+ *      TranslateMessage(&msg);
+ *
+ * ATTENTION!: SciterTranslateMessage call is critical for popup elements in
+ * MoSciter. On Desktop versions of the Sciter this function does nothing so can
+ * be ommited.
+ *
+ **/
+
+#ifdef WINDOWS
+SBOOL SCAPI SciterTranslateMessage(MSG *lpMsg);
+#endif
+
 /**Set various options.
  *
  * \param[in] hWnd \b HWINDOW, Sciter window handle.
@@ -853,7 +874,6 @@ typedef enum OUTPUT_SUBSYTEMS {
   OT_DOM = 0, // html parser & runtime
   OT_CSSS,    // csss! parser & runtime
   OT_CSS,     // css parser
-  OT_TIS,     // TIS parser & runtime (deprecated, kept for compatibility)
   OT_SCRIPT,  // JS parser & runtime
 } OUTPUT_SUBSYTEMS;
 enum OUTPUT_SEVERITY {

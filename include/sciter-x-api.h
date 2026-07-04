@@ -12,6 +12,7 @@
 #ifndef __SCITER_API_X__
 #define __SCITER_API_X__
 
+#include "sciter-version.h"
 #include "sciter-x-def.h"
 #include "sciter-x-dom.h"
 #include "sciter-x-msg.h"
@@ -368,9 +369,9 @@ typedef struct _ISciterAPI {
   SCDOM_RESULT SCFN(SciterGetElementAsset)(HELEMENT el, UINT64 nameAtom,
                                            som_asset_t **ppass);
 
-  UINT SCFN(SciterSetVariable)(HWINDOW hwndOrNull, LPCWSTR path,
+  UINT SCFN(SciterSetVariable)(HWINDOW hwndOrNull, LPCSTR name,
                                const VALUE *pvalToSet);
-  UINT SCFN(SciterGetVariable)(HWINDOW hwndOrNull, LPCWSTR path,
+  UINT SCFN(SciterGetVariable)(HWINDOW hwndOrNull, LPCSTR name,
                                VALUE *pvalToGet);
 
   UINT SCFN(SciterElementUnwrap)(const VALUE *pval, HELEMENT *ppElement);
