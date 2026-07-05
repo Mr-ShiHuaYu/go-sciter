@@ -46,7 +46,9 @@ set CGO_ENABLED=1
 - go build -x -o ./examples/go-sciter-demo/go-sciter-demo.exe ./examples/go-sciter-demo
 
 > -x 表示显示中间的过程
+> 
 > -a 可以强制重新编译
+> 
 > -o 指定输出文件名
 > 
 > go-sciter-demo 的代码来自于:
