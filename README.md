@@ -65,6 +65,52 @@ https://github.com/Mr-ShiHuaYu/go-sciter
 
 ## dll目录下的 inspector.exe 是运行调试工具,类似于浏览器的开发者工具
 
+
+## 程序运行时去掉黑框(cmd窗口)(建议在发布时使用)
+没有黑色窗口,log.println或fmt.println就都看不到了
+
+在编译时加上参数 -ldflags="-H windowsgui"，比如
+
+`go build -ldflags="-H windowsgui"`
+
+## 自定义程序图标及版本信息
+在没有使用winres时,go build的exe程序是没有图标及版本信息的.现在介绍使用方法(此方法只在windows下有效)
+详细见: https://gitee.com/ying32/govcl/wikis/pages?sort_id=410058&doc_id=102420
+### 补充说明:
+- app.rc包含了app.manifest(清单文件,可控制是否要管理员权限),applogo.ico(图标),版本信息(自定义)
+- 编译命令(将rc转.syso)
+* x86
+  windres.exe -i app.rc -o defaultRes_windows_386.syso -F pe-i386
+* x64
+  windres.exe -i app.rc -o defaultRes_windows_amd64.syso -F pe-x86-64
+- 编译后,只需要将.syso(名称无所谓,只能有一个,会默认找.syso)存放到项目根目录,就可以了,go build编译时,需要指定整个目录 go build .
+
+## XP系统下运行说明
+### 解决XP中文乱码问题
+
+在所有公共的css或者当前页面头上添加:
+
+```css
+html {
+}
+
+* {
+    font-family: "SimSun", "宋体",
+    "SimHei", "黑体",
+    "Microsoft YaHei", "微软雅黑",
+    "PingFang SC",
+    Tahoma, Arial, sans-serif !important;
+}
+```
+
+不知道为什么,必须在**html空标签后面设置**才会生效:
+
+### sqlite
+运行sqlite时,会出现 无法定位程序输入点 ReleaseSWLockExcluseive 于动态链接库 KERNEL32.DLL 上
+即使使用官方的scapp.exe也是同样的错误,并不是go的原因
+因为,在官方的 bin\windows.xp\x32 目录下,就没有 sciter-sqlite.dll,所以,XP不支持,要想支持只能买源码,手动编译
+- 但,GO可以使用GO的sqlite库,不使用sciter的
+
 ## 以下是原readme
 
 [![AppVeyor status](https://ci.appveyor.com/api/projects/status/rphv883klffw9em9/branch/master?svg=true)](https://ci.appveyor.com/project/pravic/go-sciter)
