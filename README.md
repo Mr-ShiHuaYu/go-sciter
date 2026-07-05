@@ -4,10 +4,10 @@
 ## sciter sdk下载:
 https://gitlab.com/sciter-engine/sciter-js-sdk/-/releases
 
-## 此demo兼容XP系统
+## 本仓库的代码兼容XP系统
 
 ## 版本说明
-此demo,已经更新到了v6的版本
+已经更新到了v6的版本
 根目录下的sciter.dll是v6.0.4.5的,截止2026-07-05最新版本
 
 ## 编译提前配置
@@ -49,6 +49,9 @@ set CGO_ENABLED=1
 > -a 可以强制重新编译
 > -o 指定输出文件名
 > 
+> go-sciter-demo 的代码来自于:
+https://github.com/Mr-ShiHuaYu/go-sciter
+> 特别感谢
 
 ## 运行特别注意
 - 运行时,需要复制项目dll目录下对应的操作系统的sciter库到程序运行目录
