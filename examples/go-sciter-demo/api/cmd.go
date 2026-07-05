@@ -5,7 +5,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"go-sciter-v6-demo/utils/panicutil"
+	"github.com/Mr-ShiHuaYu/go-sciter/examples/go-sciter-demo/utils/panicutil"
 
 	"github.com/Mr-ShiHuaYu/go-sciter"
 )

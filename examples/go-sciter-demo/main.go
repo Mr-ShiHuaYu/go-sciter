@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"go-sciter-v6-demo/api"
-	"go-sciter-v6-demo/utils/panicutil"
-
 	"github.com/Mr-ShiHuaYu/go-sciter"
+	"github.com/Mr-ShiHuaYu/go-sciter/examples/go-sciter-demo/api"
+	"github.com/Mr-ShiHuaYu/go-sciter/examples/go-sciter-demo/utils/panicutil"
 	"github.com/Mr-ShiHuaYu/go-sciter/window"
 )
 

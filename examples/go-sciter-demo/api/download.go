@@ -12,9 +12,9 @@ import (
 	"path"
 	"strings"
 
-	"go-sciter-v6-demo/utils/panicutil"
-	"go-sciter-v6-demo/utils/pathutil"
-	"go-sciter-v6-demo/utils/regexputil"
+	"github.com/Mr-ShiHuaYu/go-sciter/examples/go-sciter-demo/utils/panicutil"
+	"github.com/Mr-ShiHuaYu/go-sciter/examples/go-sciter-demo/utils/pathutil"
+	"github.com/Mr-ShiHuaYu/go-sciter/examples/go-sciter-demo/utils/regexputil"
 
 	"github.com/Mr-ShiHuaYu/go-sciter"
 )

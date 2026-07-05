@@ -33,3 +33,5 @@ sciter-sdk*/
 include6/
 .trae/
 *.sum
+libzmq-mt-4_3_6.dll
+jzmq.dll

@@ -1,13 +1,25 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>sciter callback</title>
+</head>
+<body>
 <div>
-    <button id="btn">Click Me</button>
+    <button id="btn" style="width: 100px;height: 50px;background: #4096ff;">点我</button>
 </div>
-<script type="text/tiscript">
-function callback(abc){
-    view.msgbox(#information,abc);
-}
+<script>
+    function callback(abc) {
+        Window.this.modal(<info>这是GO调用前端的方法传递的参数:{abc}</info>);
+    }
 
-$(#btn).on("click",function(){
-    var obj = {num:100, str:"Hello World"};
-    view.getNetInformation(1,"test",callback, obj);
-});
+    document.on("click", "button#btn", function () {
+        var obj = {num: 100, str: "Hello World"};
+        let result = Window.this.xcall('getNetInformation', 1, "test", callback, obj);
+        Window.this.modal(<info>这是GO返回的结果:{JSON.stringify(result)}</info>);
+    });
+
 </script>
+
+</body>
+</html>

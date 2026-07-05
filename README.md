@@ -1,0 +1,193 @@
+# Go bindings for Sciter
+## 更新到Sciter v6.0.4.5
+## 兼容XP
+## sciter sdk下载:
+https://gitlab.com/sciter-engine/sciter-js-sdk/-/releases
+
+## 此demo兼容XP系统
+
+## 版本说明
+此demo,已经更新到了v6的版本
+根目录下的sciter.dll是v6.0.4.5的,截止2026-07-05最新版本
+
+## 编译提前配置
+### 64位
+先下载gcc 64位版本,设置环境变量PATH
+set PATH=D:\5CPP\5.C\mingw64\bin;%PATH%;
+
+```shell
+REM 64位
+@echo off
+chcp 65001
+set PATH=E:\go\resources\go-sciter\xp\w64devkit-x86-2.0.0\bin;%PATH%;
+set GOOS=windows
+set GOARCH=amd64
+set CGO_ENABLED=1
+```
+
+### 32位XP
+- 需要先下载 go 1.11.13-386 32位版本,这是测试过支持XP的最后版本,可以使用go module
+- 下载gcc 32位,推荐w64devkit-x86-2.0.0,支持最新的XP系统的GCC
+
+```shell
+REM 32位XP
+@echo off
+chcp 65001
+set PATH=E:\go\resources\go-sciter\xp\w64devkit-x86-2.0.0\bin;%PATH%;
+set GOOS=windows
+set GOARCH=386
+set CGO_ENABLED=1
+```
+
+## 开始编译示例代码
+> go-sciter-demo 里面是最全的,其他的示例还没修改成兼容,只有以下2个示例是可以运行的,go-sciter-demo其中包含了其他全部
+
+- go build -x -o ./examples/callback/callback.exe ./examples/callback
+- go build -x -o ./examples/go-sciter-demo/go-sciter-demo.exe ./examples/go-sciter-demo
+
+> -x 表示显示中间的过程
+> -a 可以强制重新编译
+> -o 指定输出文件名
+> 
+
+## 运行特别注意
+- 运行时,需要复制项目dll目录下对应的操作系统的sciter库到程序运行目录
+- 32位的非XP系统,复制`dll\windows\x32\sciter.dll`到程序运行目录
+- 64位的系统,复制`dll\windows\x64\sciter.dll`到程序运行目录
+- xp系统,复制`dll\windows.xp\x32\sciter.dll`到程序运行目录
+- 其他系统类似
+> 此dll目录是官方sdk中bin目录复制的
+
+## dll目录下的 inspector.exe 是运行调试工具,类似于浏览器的开发者工具
+
+## 以下是原readme
+
+[![AppVeyor status](https://ci.appveyor.com/api/projects/status/rphv883klffw9em9/branch/master?svg=true)](https://ci.appveyor.com/project/pravic/go-sciter)
+[![Travis Status](https://travis-ci.com/sciter-sdk/go-sciter.svg?branch=master)](https://travis-ci.com/sciter-sdk/go-sciter)
+[![License](https://img.shields.io/github/license/sciter-sdk/go-sciter.svg)](https://github.com/Mr-ShiHuaYu/go-sciter)
+[![Join the forums at https://sciter.com/forums](https://img.shields.io/badge/forum-sciter.com-orange.svg)](https://sciter.com/forums)
+
+Check [this page](http://sciter.com/developers/sciter-sdk-bindings/) for other language bindings (Delphi / D / Go / .NET / Python / Rust).
+
+----
+
+
+# Attention
+
+The ownership of project is transferred to this new organization.
+Thus the `import path` for golang should now be `github.com/Mr-ShiHuaYu/go-sciter`, but the package name is still `sciter`.
+
+# Introduction
+
+This package provides a Golang bindings of [Sciter][] using cgo.
+Using go sciter you must have the platform specified `sciter dynamic library`
+downloaded from [sciter-sdk][], the library itself is rather small
+ (under 5MB, less than 2MB when upxed) .
+
+Most [Sciter][] API are supported, including:
+
+ * Html string/file loading
+ * DOM manipulation/callback/event handling
+ * DOM state/attribute handling
+ * Custom resource loading
+ * Sciter Behavior
+ * Sciter Options
+ * Sciter Value support
+ * NativeFunctor (used in sciter scripting)
+
+And the API are organized in more or less a gopher friendly way.
+
+Things that are not supported:
+
+ * Sciter Node API
+ * TIScript Engine API
+
+# Getting Started
+
+###  At the moment only **Go 1.10** or higher is supported (issue #136).
+
+ 1. Download the [sciter-sdk][]
+ 2. Extract the sciter runtime library from [sciter-sdk][] to system PATH
+
+    The runtime libraries lives in `bin` `bin.lnx` `bin.osx` with suffix like `dll` `so` or `dylib`
+
+    * Windows: simply copying `bin\64\sciter.dll` to `c:\windows\system32` is just enough
+    * Linux:
+      - `cd sciter-sdk/bin.lnx/x64`
+      - `export LIBRARY_PATH=$PWD`
+      - `echo $PWD >> libsciter.conf`
+      - `sudo cp libsciter.conf /etc/ld.so.conf.d/`
+      - `sudo ldconfig`
+      - `ldconfig -p | grep sciter` should print libsciter-gtk.so location
+    * OSX:
+      - `cd sciter-sdk/bin.osx/`
+      - `export DYLD_LIBRARY_PATH=$PWD`
+
+ 3. Set up GCC envrionmnet for CGO
+
+    [mingw64-gcc][] (5.2.0 and 7.2.0 are tested) is recommended for Windows users.
+
+    Under Linux gcc(4.8 or above) and gtk+-3.0 are needed.
+
+ 4. `go get -x github.com/Mr-ShiHuaYu/go-sciter`
+
+ 5. Run the example and enjoy :)
+
+# Sciter Desktop UI Examples
+
+![](http://sciter.com/screenshots/slide-wt5.png)
+
+![](http://sciter.com/screenshots/slide-norton360.png)
+
+![](http://sciter.com/screenshots/slide-norton-nis.png)
+
+![](http://sciter.com/screenshots/slide-cardio.png)
+
+![](http://sciter.com/screenshots/slide-surveillance.png)
+
+![](http://sciter.com/screenshots/slide-technology.png)
+
+![](http://sciter.com/screenshots/slide-sciter-ide.png)
+
+![](http://sciter.com/screenshots/slide-sciter-osx.png)
+
+![](http://sciter.com/screenshots/slide-sciter-gtk.png)
+
+
+# Sciter Version Support
+Currently supports [Sciter][] version `4.0.0.0` and higher.
+
+[Sciter]: http://sciter.com/
+[sciter-sdk]: http://sciter.com/download/
+
+# About Sciter
+
+[Sciter][] is an `Embeddable HTML/CSS/script engine for modern UI development, Web designers, and developers, can reuse their experience and expertise in creating modern looking desktop applications.`
+
+In my opinion, [Sciter][] , though not open sourced, is an great
+desktop UI development envrionment using the full stack of web technologies,
+which is rather small (under 5MB) especially compared to [CEF][],[Node Webkit][nw] and [Atom Electron][electron]. :)
+
+Finally, according to [Andrew Fedoniouk][author] the author and the Sciter
+`END USER LICENSE AGREEMENT` , the binary form of the [Sciter][]
+dynamic libraries are totally free to use for commercial or
+non-commercial applications.
+
+# The Tailored Sciter C Headers
+This binding ueses a tailored version of the sciter C Headers, which lives in directory: `include`. The included c headers are a modified version of the
+[sciter-sdk][] standard headers.
+
+It seems [Sciter][] is developed using C++, and the included headers in the
+[Sciter SDK][sciter-sdk] are a mixture of C and C++, which is not
+quite suitable for an easy golang binding.
+
+I'm not much fond of C++ since I started to use Golang, so I made this
+modification and hope [Andrew Fedoniouk][author] the author would provide
+pure C header files for Sciter. :)
+
+[CEF]:https://bitbucket.org/chromiumembedded/cef
+[nw]: https://github.com/nwjs/nw.js
+[electron]:https://github.com/atom/electron
+
+[author]: http://sciter.com/about/
+[mingw64-gcc]: http://sourceforge.net/projects/mingw-w64/
