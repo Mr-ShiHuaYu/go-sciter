@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" window-resizable="true">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>剪切板示例</title>
+    <script>
+        document.on("click", "button#read", function () {
+            let data = Clipboard.read();
+            if(typeof data === "object"){
+                document.$("div#content").innerText = JSON.stringify(data, null, "  ");;
+            }else{
+                document.$("div#content").innerText = data;
+            }
+        });
+
+        document.on("click", "button#copyText", function () {
+            let r = Clipboard.writeText("sciter api写入的内容");
+            Window.this.modal(<info>写入结果：{r}</info>);
+        });
+
+        document.on("click", "button#copyHtml", function () {
+            try{
+                let r = Clipboard.write({
+                    html:"<a>HTML标签请用特殊引号</a>",
+                });
+                Window.this.modal(<info>写入结果：{r}</info>);
+            }catch(e){
+                Window.this.modal(<info>写入结果：{e}</info>);
+            }
+        });
+
+        document.on("click", "button#copyImage", async function () {
+            // 【图片未生效】，image为{}
+            // 钉钉复制图片读取结果
+            // { "file": [ "D:\\GlobalCache\\DingTalk\\f5de70c0f5b8cd8c5660_v3\\resource_cache\\ca\\cada69c9e430b71c2a0726be1638f324.png" ], "image": {} }
+            let r = Clipboard.write({
+                image: await Graphics.Image.load(__DIR__ + "images/test.jpg")
+            });
+            Window.this.modal(<info>写入结果：{r}</info>);
+        });
+
+        document.on("click", "button#copyTextAndImage", async function () {
+            // 【图片未生效】，image为{}
+            let r = Clipboard.write({
+                image: await Graphics.Image.load(__DIR__ + "images/test.jpg"),
+                text: "这个是测试图片"
+            });
+            Window.this.modal(<info>写入结果：{r}</info>);
+        });
+        document.on("click", "button#copyFile", function () {
+            let r = Clipboard.write({
+                file:[__DIR__ + "images/test.jpg"],
+            });
+            Window.this.modal(<info>写入结果：{r}</info>);
+        });
+        document.on("click", "button#copyJson", function () {
+            // 【未生效】
+            let jsonObj = `{name:"mt",age:18}`;
+            let r = Clipboard.write({
+                json:jsonObj,
+            });
+            Window.this.modal(<info>写入结果：{r}</info>);
+        });
+        document.on("click", "button#copyLink", function () {
+            // 【未生效】
+            let r = Clipboard.write({
+                link:{ caption: "百度", url: "https://www.baidu.com"},
+            });
+            Window.this.modal(<info>写入结果：{r}</info>);
+        });
+    </script>
+    <style src="../css/common.css"></style>
+</head>
+
+<body>
+    <div>
+        参考地址：https://docs.sciter.com/docs/JS.runtime/Clipboard
+    </div>
+    <div>
+        <button #read>读取剪切板内容</button>
+        <button #copyText >复制文字</button>
+        <button #copyHtml >复制HTML</button>
+        <button #copyImage >复制图片</button>
+        <button #copyTextAndImage >复制文字+图片</button>
+        <button #copyFile >复制文件</button>
+        <button #copyJson >复制json对象</button>
+        <button #copyLink >复制链接</button>
+        <div #content selectable></div>
+    </div>
+</body>
+
+</html>

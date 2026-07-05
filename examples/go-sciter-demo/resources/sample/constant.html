@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" window-resizable="true" window-frame="standard">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>常量</title>
+    <script src="../js/common.js"></script>
+    <style src="../css/common.css"></style>
+    <script type="module">
+        document.on("ready", function () {
+            document.$("div#constant").content(<>
+                <h2>Constant常量</h2>
+                <div class="ellipsis" selectable>__FILE__(正在编译的当前文件的url)：{__FILE__}</div>
+                <div class="ellipsis" selectable>__DIR__( __FILE__的文件夹部分，总是以/结尾)：{__DIR__}</div>
+                <div class="ellipsis" selectable>__FUNC__(如果可用，则编译函数名，否则为anonymous, eval, script或module之一)：{__FUNC__}</div>
+                <div class="ellipsis">__LINE__(源文件中的行号)：{__LINE__}</div>
+            </>
+            );
+            showVersoin();
+            showEnv("PATH");
+            showPath("home");
+            showPath("applications");
+            showPath("root");
+            showPath("desktop");
+            showPath("appdata");
+            showPath("downloads");
+            showPath("documents");
+            showPath("music");
+            showPath("videos");
+            showPath("pictures");
+        });
+        import * as env from "@env";
+        import * as sciter from "@sciter";
+        function showVersoin() {
+             document.$("div#env").append(<>
+                <h2>Sciter版本信息</h2>
+                <div><label>version:</label>	  <span>{sciter.VERSION}</span></div>
+                <div><label>revision:</label>  <span>{sciter.REVISION}</span></div>
+                <h2>QuickJS版本信息</h2>
+                <div><label>version:</label>	  <span>{sciter.QUICKJS_VERSION}</span></div>
+                <h2>@env</h2>
+                <div><label>OS type:</label>	   <span>{env.DEVICE}</span></div>
+                <div><label>OS version:</label> <span>{env.OS}</span></div>
+                <div><label>GFX backend:</label><span>{Window.this.graphicsBackend}</span></div>
+                <div><label>user:</label>		   <span>{env.userName()}</span></div>
+                <div><label>machine:</label>	   <span>{env.machineName()}</span></div>
+                <div><label>domain:</label>	   <span>{env.domainName()}</span></div>
+                <div><label>country:</label>	   <span>{env.country()}</span></div>
+                <div><label>language:</label>	 <span>{env.language()}</span></div>
+                <div><label>arguments:</label>	 <span>{env.arguments()}</span></div>
+            </>);
+        }
+        function showEnv(name) {
+            document.$("div#env").append(<div><label>{name}:</label>{env.variable(name)}</div>);
+        }
+
+        function showPath(name) {
+            document.$("div#path").append(<><div><label>{name}:</label>{env.path(name)}</div>
+        <div><label>pathURL-{name}:</label>{env.pathURL(name)}</div></>);
+        }
+    </script>
+    <style>
+        label{
+            font-weight: 600;
+            font-size:20px;
+        }
+        
+    </style>
+</head>
+
+<body>
+    <h1>
+        参考：https://docs.sciter.com/docs/JS/
+    </h1>
+    <div #constant></div>
+    <hr/>
+    <h1>
+        参考：https://docs.sciter.com/docs/JS.runtime/module-env
+    </h1>
+    <div #env>
+    </div>
+    <div #path>
+        <h2>Path路径信息</h2>
+    </div>
+</body>
+
+</html>

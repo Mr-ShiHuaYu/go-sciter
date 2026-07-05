@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" window-resizable="true" window-frame="standard">
+
+<head>
+    <meta charset="UTF-8" />
+    <style src="css/common.css"></style>
+    <style src="css/modtemplate.css"></style>
+    <script src="js/common.js"></script>
+    <script src="js/modtemplate.js"></script>
+    <style>
+
+    </style>
+    <script>
+        setModName("plugin");
+    </script>
+</head>
+
+<body>
+    <frameset cols="200px,*">
+        <div style="background: white;margin: 0;">
+            <select|list #demolist>
+                <option selected value="index">介绍</option>
+                <option value="markdown">Markdown</option>
+            </select>
+        </div>
+        <splitter />
+        <frame #sampleFrame src="plugin/index.html"></frame>
+    </frameset>
+</body>
+
+</html>

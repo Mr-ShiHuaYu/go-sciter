@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" window-resizable="true" window-frame="standard">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Folder示例</title>
+    <style src="../css/common.css"></style>
+    <script src="../js/fileDropZone.js"></script>
+    <script src="../js/common.js"></script>
+     <script|module>
+        // import {FolderView}  from "../js/folder-view.js";
+        document.on("file-activate", (e) => {
+            showInfo("选中文件："+e.data);
+            return true;
+        });
+
+    </script>
+    <style>
+        @import url(../css/folder-view.css);
+    </style>
+</head>
+
+<body>
+    <div>
+        <code>备注：folder-view.css中包含了prototype: FolderView url(../js/folder-view.js);需要根据实际环境调整。或者在script中使用`import {FolderView}  from "../js/folder-view.js";`，两者选其中一个即可。</code>
+    </div>
+    <div style="height: '*';">
+        <folder #files filter="*.js;*.html;*.*" path="../css/" />  
+    </div>
+
+</body>
+
+</html>

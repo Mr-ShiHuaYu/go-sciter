@@ -1,0 +1,80 @@
+/* 设置垂直滚动条的宽度和水平滚动条的高度 */
+scrollbar {
+    width: 6px;
+    /* 垂直滚动条的宽度 */
+    height: 8px;
+    /* 水平滚动条的高度 */
+    background: #f0f0f0;
+    /* 滚动条轨道的背景色 */
+}
+
+scrollbar:hover,
+scrollbar:active {
+    width: 6px;
+    /* 垂直滚动条的宽度 */
+    height: 8px;
+    /* 水平滚动条的高度 */
+}
+
+/* 设置滚动条滑块（thumb）的样式 */
+scrollbar-thumb {
+    background: #c1c1c1;
+    /* 滑块的默认颜色 */
+    border-radius: 3px;
+    /* 滑块的圆角 */
+    width: 6px;
+    /* 垂直滚动条的宽度 */
+    height: 8px;
+}
+
+/* 设置鼠标悬停在滑块上时的样式 */
+scrollbar-thumb:hover {
+    background: #a8a8a8;
+    /* 悬停时颜色变深 */
+    width: 6px;
+    /* 垂直滚动条的宽度 */
+    height: 8px;
+}
+
+/* 设置滑块被按下时的样式 */
+scrollbar-thumb:active {
+    background: #787878;
+    /* 按下时颜色更深 */
+    width: 6px;
+    /* 垂直滚动条的宽度 */
+    height: 8px;
+}
+
+/* 你也可以根据需要定制轨道 */
+scrollbar-track {
+    background: #e0e0e0;
+    /* 轨道的背景色 */
+}
+
+/* 定制滚动条两端的按钮 (如果可见) */
+scrollbar-button {
+    background: #d0d0d0;
+    border: 1px solid #b0b0b0;
+}
+
+/* 定制按钮上的箭头 */
+scrollbar-arrow {
+    color: #505050;
+    /* 箭头的颜色 */
+}
+
+/* 垂直滚动条 */
+scrollbar:vertical {
+  width: 8px; /* 固定宽度 */
+}
+
+scrollbar-thumb:vertical {
+  width: 8px; /* 必须与轨道宽度一致 */
+  background: #c1c1c1;
+  border-radius: 6px;
+}
+
+/* 禁止拖动时变宽 */
+scrollbar-thumb:vertical:active {
+  width: 8px !important; /* 关键：覆盖活动状态宽度 */
+}

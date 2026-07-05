@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" window-resizable="true" window-frame="standard">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Menu菜单示例</title>
+    <style src="../css/common.css"></style>
+    <script src="../js/fileDropZone.js"></script>
+    <script src="../js/common.js"></script>
+    <script>
+        document.on("click", "ul#demo > li > menu > li", (evt,li) => {
+            showInfo("menu item click on exit li "); 
+        });
+
+        // document.on("click", "li#exit", (evt,li) => {
+        //     showInfo("menu item click on exit "); 
+        // });
+    </script>
+    <style>
+        ul.left-menu-bar {
+            /* flow: vertical; */
+            /* behavior: menu-bar; */
+            vertical-align: middle;
+            margin: 0;
+            border-left: 1px solid transparent;
+            padding: 0;
+        }
+
+        ul.left-menu-bar>li {
+            /* flow: vertical; */
+            margin: 0;
+            height: 35px;
+            padding: 3px 12px;
+            width: max-content;
+            vertical-align: middle;
+            display: block;
+        }
+
+        ul.left-menu-bar:focus>li:current,
+        ul.left-menu-bar>li:owns-popup,
+        ul.left-menu-bar>li menu li:hover:owns-popup,
+        ul.left-menu-bar>li menu li:current {
+            background-color: highlight;
+            color: highlighttext;
+        }
+
+        ul.left-menu-bar>li menu {
+            /* behavior: menu; */
+            /* flow: vertical; */
+            display: none;
+            margin: 0;
+            padding: 0;
+            max-width: max-content;
+            border: 1px solid color(widget-border);
+            margin: -1px 2px;
+        }
+
+        ul.left-menu-bar>li menu li {
+            width: "*";
+            display: block;
+            /* flow: horizontal; */
+            vertical-align: middle;
+            padding-left: 24px;
+            /* room for icon */
+            padding-right: 18px;
+            /* room for the arrow */
+            padding-top: 4px;
+            padding-bottom: 4px;
+            height: 30px;
+            foreground-repeat: no-repeat;
+            foreground-position: left 2px top 50%;
+        }
+    </style>
+</head>
+
+<body>
+    <include src="nav-menu.html" />
+    <ul id="demo" class="menu-bar">
+        <li>文件
+            <menu>
+                <li #exit>关闭</li>
+            </menu>
+        </li>
+        <li>示例
+            <menu>
+                <li>Layout布局</li>
+                <li>Icon图标</li>
+                <li>Form表单示例</li>
+            </menu>
+        </li>
+        <li>帮助
+            <menu>
+                <li>更新版本</li>
+                <li>关于</li>
+            </menu>
+        </li>
+    </ul>
+</body>
+
+</html>

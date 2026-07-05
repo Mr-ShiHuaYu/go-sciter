@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" window-resizable="true" window-frame="extended">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>go-sciter-demo</title>
+    <style src="css/common.css"></style>
+    <script src="js/common.js"></script>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        div {
+            min-width: min-content;
+        }
+
+        frameset {
+            min-height: min-content;
+            padding: 0;
+        }
+
+        splitter {
+            border: none;
+        }
+
+        splitter:hover {
+            background: red;
+        }
+
+        section {
+            background: gold;
+        }
+
+        button {
+            border-color: transparent;
+            background-color: transparent;
+        }
+
+        button:hover {
+            border-color: transparent;
+            background-color: rgba(0, 0, 0, 0.25);
+            color: black;
+        }
+
+        button[role="window-close"]:hover {
+            background: rgb(232, 17, 35);
+            color: #fff;
+            border-color: transparent;
+        }
+
+        button>icon {
+            size: 25px;
+            color: white;
+        }
+        
+        div.header-menu{
+            flow:horizontal;
+            height: '*';
+            margin: 0;
+            padding: 0;
+        }
+        
+        div#header-menu > button {
+            height: 64px;
+            line-height:64px;
+        }
+
+        div#header-menu > button:hover {
+            background-color: #dbdbdb;
+        }
+
+        div#header-menu > button.current {
+            background-color: #cccccc;
+        }
+
+        div#header-menu > button.not-current {
+            background-color: transparent;
+        }
+    </style>
+    <script>
+        // 统一处理按钮事件
+        document.on("click", "button#reload", function (evt, button) {
+            Window.this.xcall("loadFile", "index.html");
+        });
+
+        const CLOSE_BY_CHROME = 0; // user clicked `🗙` on window chrome
+        const CLOSE_BY_CODE = 1;   // window.close() issued
+        const CLOSE_BY_LOAD = 2;   // document unload-old/load-new
+        Window.this.document.on("closerequest", event => {
+            // showInfo(event.reason);
+            if (event.reason == CLOSE_BY_CHROME) {
+                let r = Window.this.modal(<question caption="温馨提示">
+                    <content>确定要退出客户端吗?</content>
+                    <buttons>
+                        <button id="yes" role="default-button">确定</button>
+                        <button id="no" role="cancel-button">取消</button>
+                    </buttons>
+                </question>);
+                if (r == "yes") {
+                    Window.this.close();
+                }else{
+                    event.preventDefault();
+                }
+            }
+        });
+
+        Window.this.on("statechange", event => {
+            console.log("state=",Window.WINDOW_MAXIMIZED,Window.this.state,Window.WINDOW_SHOWN)
+            if(Window.this.state == Window.WINDOW_SHOWN) {
+                document.$("button[role='window-maximize']").innerHTML= `<icon|window-maximize />`;
+            }
+            if(Window.this.state == Window.WINDOW_MAXIMIZED) {
+                document.$("button[role='window-maximize']").innerHTML= `<icon|window-restore />`;
+            }
+        });
+
+        document.on("click", "div#header-menu > button", function (evt, button) {
+            tryCatch(()=>{
+                let src = button.attributes["src"];
+                if(!isStrEmpty(src)){
+                    document.$("#mod-frame").frame.loadFile(src); 
+                    let divs = document.getElementsByClassName("header-menu");
+                    for(let divMenu of divs){
+                        for(let btn of divMenu.children){
+                            if(btn.attributes["src"]!=src){
+                                btn.className = "not-current";
+                            }else{
+                                btn.className = "current";
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+        function postCustomEvent(evnetName,data){
+            tryCatch(()=>{
+                // showInfo(name);
+                // 发送全局事件，也可以使用Window.send，与post略有不同，参考官网文档：https://docs.sciter.com/docs/DOM/Window#Window-send
+                Window.post(new Event(evnetName, {bubbles:true,data:data}) );
+                // 给farme发送事件
+                // document.$("#mod-frame").frame.document.postEvent(new Event('myself-msg1', {bubbles:true,data:name}) );
+            });
+        }
+    </script>
+</head>
+
+<!-- 自定义标题栏 -->
+<!-- <header style="height: 64px;flow: horizontal;vertical-align: middle;padding: 0;">
+    <include src="cust-header.html" />
+</header> -->
+
+<body>
+    <frameset rows="64px,*" style="padding: 0;margin: 0;">
+        <!-- 如何方式自定义header，最大化时会超出一部分，原因未知 -->
+        <div style="flow: horizontal;vertical-align: middle;padding: 0;margin:0 ;">
+            <include src="cust-header.html" />
+        </div>
+        <frameset>
+            <frame #mod-frame src="sample.html"></frame>
+        </frameset>
+    </frameset>
+</body>
+
+</html>

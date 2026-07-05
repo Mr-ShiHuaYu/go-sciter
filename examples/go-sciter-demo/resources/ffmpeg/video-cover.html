@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" window-resizable="true" window-frame="standard">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>FFmpeg给视频添加封面</title>
+    <style src="../css/common.css"></style>
+    <style>
+        input {
+            width: 60%;
+        }
+    </style>
+    <script src="../js/fileDropZone.js"></script>
+    <script src="../js/common.js"></script>
+    <script type="module">
+        import * as env from "@env";
+        document.on("click", "button#btn-ffmpeg", function () {
+            selectFile({
+                mode: "open",
+                filter: "exe (*.exe)|*.exe;",
+                caption: "选择FFmpeg文件",
+            }, "#ffmpegPath");
+        });
+        document.on("click", "button#btn-video", function () {
+            selectFile({
+                mode: "open",
+                // filter: "HTML File (*.htm,*.html)|*.html;*.htm|All Files (*.*)|*.*", 
+                caption: "选择视频",
+            }, "#inputVideo");
+        });
+        document.on("click", "button#btn-image", function () {
+            selectFile({
+                mode: "open",
+                // filter: "HTML File (*.htm,*.html)|*.html;*.htm|All Files (*.*)|*.*", 
+                caption: "选择图片",
+            }, "#inputImage");
+        });
+        document.on("click", "button#btn-create-video", function () {
+            tryCatch(() => {
+                let ffmpegPath = document.$("#ffmpegPath").value;
+                if(isStrEmpty(ffmpegPath)){
+                    ffmpegPath = "ffmpeg";
+                }
+                let videoPath = document.$("#inputVideo").value;
+                let imagePath = document.$("#inputImage").value;
+                let index = videoPath.lastIndexOf(".");
+                let outputPath = videoPath.substring(0, index) + "-output" + videoPath.substring(index);
+                let cmd = ` -i "` + videoPath + `" -i "` + imagePath + `" -map 0 -map 1 -c copy -disposition:v:1 attached_pic "` + outputPath + `"`;
+                // let r = env.exec("notepad");
+                let list = ["-i", videoPath, "-i", imagePath, "-map", "0", "-map", "1", "-c", "copy", "-disposition:v:1", "attached_pic", outputPath];
+                let r = Window.this.xcall("execCmdAsync", ffmpegPath, list.join(","));
+                document.$("#result").value = JSON.stringify(r, null, 2);
+                // env.exec("ffplay","-i",outputPath)
+                // env.exec("ffmpeg", list)
+                // showInfo(r);
+            });
+        });
+
+        // showInfo(env.variable('PATH'));
+    </script>
+</head>
+
+<body>
+    <frameset rows="200,*" style="background-color: white;">
+        <div>
+            <div>
+                <label>FFmpeg路径</label>
+                <input #ffmpegPath type="text" class="dropZone" placeholder="请选择FFMPEG文件" />
+                <button #btn-ffmpeg>选择FFMPEG</button>
+            </div>
+            <div>
+                <label>视频路径</label>
+                <input #inputVideo type="text" class="dropZone" placeholder="请选择视频文件" />
+                <button #btn-video>选择视频</button>
+            </div>
+            <div>
+                <label>图片路径</label>
+                <input #inputImage type="text" class="dropZone" placeholder="请选择封面图片" />
+                <button #btn-image>选择图片</button>
+            </div>
+            <div>
+                <button #btn-create-video>生成视频</button>
+            </div>
+        </div>
+        <textarea #result style="height: '*';width: 100%;"></textarea>
+    </frameset>
+
+</body>
+
+</html>

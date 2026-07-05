@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" window-resizable="true" window-frame="standard">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>组件相关介绍</title>
+    <style src="../css/common.css"></style>
+    <style>
+        @import url(../css/markdown.css);
+        section#html 
+        {
+            size:'*';
+            border:1px solid #ccc;
+            overflow: scroll-indicator;
+            padding: 0 2em;
+            style-set: markdown-content;
+        }
+    </style>
+    <script src="../js/common.js"></script>
+    <script type="module">
+        import * as sys from '@sys';
+        import * as sciter from '@sciter';
+        import * as env from '@env';
+
+        import { Remarkable } from '../js/remarkable/index.js';
+        import { HeaderIds } from '../js/remarkable/plugins/header-ids.js';
+        import RemarkableEmoji from '../js/remarkable/plugins/emoji/index.js';
+
+        const output = document.$("section#html");
+        const md = new Remarkable();
+        md.block.ruler.enable(['footnote', 'deflist']);
+        md.use(HeaderIds({ anchorText: " " }));
+        md.use(RemarkableEmoji);
+
+
+        document.on("^click", "section#html a[href]", function (evt, a) {
+            evt.stopPropagation();
+            let href = a.getAttribute("href");
+            if (href.startsWith("#")) {
+                let target = output.$(href);
+                console.log(href, target);
+                if (target) target.scrollIntoView(true);
+            } else {
+                // external URL
+                env.launch(href);
+            }
+        });
+
+        async function load() {
+            tryCatch(async() => {
+                let text = await sys.fs.readFile( URL.toPath( __DIR__ + "plugin.md") );
+                output.innerHTML = md.render(sciter.decode(text,"utf-8"));
+            });
+        }
+        load();   
+    </script>
+</head>
+
+<body>
+    <section#html selectable>
+    </section>
+</body>
+
+</html>

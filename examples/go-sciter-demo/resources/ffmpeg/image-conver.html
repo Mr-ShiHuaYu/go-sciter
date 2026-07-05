@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" window-resizable="true" window-frame="standard">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>FFmpeg边缘检测</title>
+    <style src="../css/common.css"></style>
+    <style>
+        input {
+            width: 60%;
+        }
+
+        .imageDiv {
+            height: '*';
+            width: 100%;
+            flow: horizontal-wrap;
+            border-spacing: 2px;
+            padding: 2px;
+            overflow-y: scroll-indicator;
+        }
+
+        .imageDiv img {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <script src="../js/fileDropZone.js"></script>
+    <script src="../js/common.js"></script>
+    <script type="module">
+        import * as env from "@env";
+
+        document.on("click", "button#btn-ffmpeg", function () {
+            selectFile({
+                mode: "open",
+                filter: "exe (*.exe)|*.exe;",
+                caption: "选择FFmpeg文件",
+            }, "#ffmpegPath");
+        });
+        document.on("click", "button#btn-image", function () {
+            selectFile({
+                mode: "open",
+                caption: "选择图片",
+            }, "#inputImage");
+        });
+        document.on("click", "button#btn-create-image", function () {
+            tryCatch(() => {
+                let ffmpegPath = document.$("#ffmpegPath").value;
+                let imagePath = document.$("#inputImage").value;
+                let mode = document.$("#create-mode").value;
+                if (isStrEmpty(ffmpegPath)) {
+                    ffmpegPath = "ffmpeg";
+                }
+                let index = imagePath.lastIndexOf(".");
+                let outputPath = imagePath.substring(0, index) + "-output"
+                    + mode;
+                let list = ["-i", imagePath, outputPath];
+                let r = Window.this.xcall("execCmd", ffmpegPath, list.join(","));
+                document.$("#imageDiv").append(<img src={outputPath} style="width:200;height:200;"/>);
+            });
+        });
+
+        import {ImgShowWindow} from "../js/dialog.js";
+        document.on("click", "div#imageDiv > img", function (evt, el) {
+            tryCatch(() => {
+                Window.this.modal({html:<ImgShowWindow src={el.src}/>,caption:"图片展示"});
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <frameset rows="180,*" style="background-color: white;">
+        <div>
+            <div>
+                <label>FFmpeg路径</label>
+                <input #ffmpegPath type="text" class="dropZone" placeholder="请选择FFMPEG文件" />
+                <button #btn-ffmpeg>选择FFMPEG</button>
+            </div>
+            <div>
+                <label>图片路径</label>
+                <input #inputImage type="text" class="dropZone" placeholder="请选择图片" />
+                <button #btn-image>选择图片</button>
+            </div>
+            <div>
+                <select|switch #create-mode>
+                    <option selected value=".png">PNG</option>
+                    <option value=".jpg">JPG</option>
+                    <option value=".jpeg">JPEG</option>
+                    <option value=".bmp">BMP</option>
+                    <option value=".webp">WebP</option>
+                </select>
+            </div>
+            <div>
+                <button #btn-create-image>生成图片</button>
+            </div>
+        </div>
+        <div #imageDiv class="imageDiv"></div>
+    </frameset>
+
+</body>
+
+</html>

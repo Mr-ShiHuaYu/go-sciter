@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" window-resizable="true" window-frame="standard">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>下载示例</title>
+    <style src="../css/common.css"></style>
+    <script src="../js/fileDropZone.js"></script>
+    <script src="../js/common.js"></script>
+    <script type="module">
+        import * as sctr from "@sciter";
+        let zip = null;
+        document.on("click", "button#download", function () {
+            tryCatchAsync(function () {
+                let url = document.$("#url").value;
+                let user = document.$("#user").value;
+                let pwd = document.$("#pwd").value;
+                let date = new Date();
+                document.$("#tableBody").append(
+                    <tr>
+                        <td>{url}</td>
+                        <td><progress name=`${url}` max="100" value="0"></progress></td>
+                        <td><label name=`${url}` ></label></td>
+                        <td><span name=`${url}` ></span></td>
+                        <td>{date.toLocaleDateString("yyyy")} {date.toLocaleTimeString("xxs")}</td>
+                    </tr>
+                );
+                Window.this.xcall("downloadFile",url,"a.dat",user,pwd);
+            });
+        });
+
+        // 通过Window.post(event)发送
+        sctr.onGlobalEvent("reloadDownloadProgress",function(evt){
+            tryCatch(()=>{
+                let element = document.$("progress[name='"+evt.data.url+"']");
+                if(element){
+                    element.setAttribute("max",evt.data.max);
+                    element.setAttribute("value",evt.data.value);
+                }
+                element = document.$("label[name='"+evt.data.url+"']"); // 状态
+                if(element){
+                    element.innerHTML = evt.data.max==evt.data.value?"已完成":"未完成";
+                }
+                element = document.$("span[name='"+evt.data.url+"']"); // 大小
+                if(element){
+                    element.innerHTML = parseInt(evt.data.max/1024/1024)+"MB";
+                }
+            });
+        });
+    </script>
+    <style>
+        body {
+            height: 100%;
+            width: '*';
+            margin: 10;
+        }
+    </style>
+</head>
+
+<body>
+        <div>
+            <div>
+            <input type="text" #url style="width: 60%;" placeholder="url下载地址" value="http://192.168.40.13:10912/pzip/202510/[ENC][2][2]PTPAN10.25073134250922.510000GA00102.2510101.251010023.zip"/>
+            <button #show>查看</button>
+            <button #download>下载</button>
+            </div>
+            <div>
+            <input type="text" #user style="width: 200;" placeholder="svn帐号" />
+            <input type="text" #pwd style="width: 200;" placeholder="svn密码" />
+            </div>
+        </div>
+        <table class="ant-table-border" style="width: '*';margin-top: 10;">
+            <thead>
+                <th>名称</th>
+                <th>进度</th>
+                <th>状态</th>
+                <th>大小</th>
+                <th>添加时间</th>
+            </thead>
+            <tbody #tableBody>
+
+            </tbody>
+            <tfoot>
+                <td colspan="5">共XXX条数据</td>
+            </tfoot>
+        </table>
+</body>
+
+</html>
