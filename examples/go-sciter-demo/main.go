@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"path/filepath"
-
 	"github.com/Mr-ShiHuaYu/go-sciter"
 	"github.com/Mr-ShiHuaYu/go-sciter/examples/go-sciter-demo/api"
 	"github.com/Mr-ShiHuaYu/go-sciter/examples/go-sciter-demo/utils/panicutil"
@@ -18,11 +17,6 @@ func main() {
 	if err != nil {
 		fmt.Println("Create Window Error: ", err)
 	}
-	fullpath, err := filepath.Abs("resources/index.html")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
 	win = w
 	// 设置运行时特性，允许调试器
 	w.SetOption(sciter.SCITER_SET_SCRIPT_RUNTIME_FEATURES, sciter.ALLOW_FILE_IO|sciter.ALLOW_SOCKET_IO|sciter.ALLOW_EVAL|sciter.ALLOW_SYSINFO)
@@ -30,7 +24,14 @@ func main() {
 	w.SetOption(sciter.SCITER_SET_DEBUG_MODE, 1)
 
 	w.SetTitle("go-sciter-demo")
-	w.LoadFile(fullpath)
+    // fullpath, err := filepath.Abs("resources/index.html")
+	// if err != nil {
+		// fmt.Println(err)
+		// return
+	// }
+	// w.LoadFile(fullpath)
+    w.SetResourceArchive(resource)
+    w.LoadFile("this://app/index.html")
 	api.MainWin = w
 	setEventHandler(w)
 	w.Show()

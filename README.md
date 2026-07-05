@@ -6,7 +6,10 @@ https://gitlab.com/sciter-engine/sciter-js-sdk/-/releases
 
 ## 本仓库的代码兼容XP系统
 
+![xp下运行截图](https://github.com/Mr-ShiHuaYu/go-sciter/blob/master/imgs/1.jpg?raw=true)
+
 ## 版本说明
+
 已经更新到了v6的版本
 根目录下的sciter.dll是v6.0.4.5的,截止2026-07-05最新版本
 
@@ -61,7 +64,7 @@ https://github.com/Mr-ShiHuaYu/go-sciter
 - 64位的系统,复制`dll\windows\x64\sciter.dll`到程序运行目录
 - xp系统,复制`dll\windows.xp\x32\sciter.dll`到程序运行目录
 - 其他系统类似
-> 此dll目录是官方sdk中bin目录复制的
+> 此dll目录是官方sdk中bin目录复制,并经过upx压缩后的,windows和linux的库都经过压缩了
 
 ## dll目录下的 inspector.exe 是运行调试工具,类似于浏览器的开发者工具
 
@@ -69,9 +72,11 @@ https://github.com/Mr-ShiHuaYu/go-sciter
 ## 程序运行时去掉黑框(cmd窗口)(建议在发布时使用)
 没有黑色窗口,log.println或fmt.println就都看不到了
 
-在编译时加上参数 -ldflags="-H windowsgui"，比如
+在编译时加上参数 -ldflags="-H windowsgui"，如:
 
-`go build -ldflags="-H windowsgui"`
+```bash
+go build -ldflags="-H windowsgui"
+```
 
 ## 自定义程序图标及版本信息
 在没有使用winres时,go build的exe程序是没有图标及版本信息的.现在介绍使用方法(此方法只在windows下有效)
@@ -84,6 +89,85 @@ https://github.com/Mr-ShiHuaYu/go-sciter
 * x64
   windres.exe -i app.rc -o defaultRes_windows_amd64.syso -F pe-x86-64
 - 编译后,只需要将.syso(名称无所谓,只能有一个,会默认找.syso)存放到项目根目录,就可以了,go build编译时,需要指定整个目录 go build .
+
+## 直接打包html等资源文件到程序exe内部,防止代码被修改
+
+```bash
+sciter-js-sdk-main-6.0.4.5\sciter-js-sdk-main\bin\windows\packfolder.exe resources res.go -v resource -go
+```
+
+> packfolder 使用方式:
+>
+> packfolder.exe -h
+> usage: packfolder.exe 要打包的文件夹 输出的文件 [options]
+>
+> [-i "foo/*;..."]          include files or folders, if defined only matching items are included
+> [-x "*.ex1;*.ex2;..."]    exclude files or folders, if defined matching items are excluded from archive
+>
+> [-v "varname"]            name of blob variable(导出的变量名)
+> [-csharp]                 generates C# class with a byte[] field literal
+> [-dlang]                  generates D ubyte[] literal
+> [-go]                     generates Go []byte literal
+> [-binary]                 generates binary file
+
+> 上面的 -v resource:-v 后面跟要导出的变量名
+>
+> -go 表示导出的是go语言
+
+会在当前目录下生成 res.go 文件,这个文件内部,就是所有的资源文件了,并且,res.go中有一个 resource 变量,导出的,便于我们在main.go中使用这个变量
+
+- 然后再修改main.go中引用html的那部分代码
+
+```go
+    // fullpath, err := filepath.Abs("resources/index.html")
+	// if err != nil {
+		// fmt.Println(err)
+		// return
+	// }
+	// w.LoadFile(fullpath)
+    w.SetResourceArchive(resource)
+    w.LoadFile("this://app/index.html")
+```
+
+> 使用 SetResourceArchive 传入 resource 导出的变量名
+>
+> 使用 LoadFile 时,需要添加 this://app/ 前缀,才能访问资源中的文件
+
+这样编译后的exe,就可以不用带html了,只需要带一个sciter.dll就可以了
+
+## 减少编译体积
+
+* -s: 去掉符号信息。
+* -w: 去掉DWARF调试信息。
+
+```bash
+go build -ldflags="-s -w"
+```
+
+**此操作大约可以减少50%左右的，但用一`-s`参数后会造成原来的错误之类的信息无法具体化**  
+
+如果要搭配上去除黑窗口,则使用:
+
+```bash
+go build -ldflags="-s -w -H windowsgui"
+```
+
+> 建议发布release版本时使用
+
+还可以使用upx对生成的exe和sciter.dll进行压缩,可进一步大幅度减少体积
+
+```bash
+upx -9 xx.exe
+upx -9 sciter.dll
+```
+
+## 跨平台编译
+
+可在任意一平台进行开发，当要发布对应平台时需要到目标平台进行编译。
+
+因为linux与macOS下用到了cgo，所以需要到目标平台进行编译（windows平台除外，可以在linux或者macOS下编译出windows应用）。
+
+> 貌似可以使用zig的编译器,在windows 下,也使用cgo,来编译出linux的程序,待测试,但不知道zig的编译器支不支持XP了
 
 ## XP系统下运行说明
 ### 解决XP中文乱码问题
@@ -105,11 +189,30 @@ html {
 
 不知道为什么,必须在**html空标签后面设置**才会生效:
 
-### sqlite
+### sqlite(XP下不支持)
 运行sqlite时,会出现 无法定位程序输入点 ReleaseSWLockExcluseive 于动态链接库 KERNEL32.DLL 上
 即使使用官方的scapp.exe也是同样的错误,并不是go的原因
 因为,在官方的 bin\windows.xp\x32 目录下,就没有 sciter-sqlite.dll,所以,XP不支持,要想支持只能买源码,手动编译
+
 - 但,GO可以使用GO的sqlite库,不使用sciter的
+
+## 总结,生产打包
+
+```bash
+set PATH=E:\go\resources\go-sciter\xp\w64devkit-x86-2.0.0\bin;%PATH%;
+set GOOS=windows
+set GOARCH=386
+set CGO_ENABLED=1
+REM 打包资源文件到res.go
+packfolder.exe resources res.go -v resource -go
+REM 修改main.go文件
+go build -ldflags="-s -w -H windowsgui" -o main.exe
+REM 减少体积,使用upx压缩,若已经压缩过,则不能压缩
+upx -9 main.exe
+upx -9 sciter.dll
+```
+
+
 
 ## 以下是原readme
 
