@@ -10,8 +10,8 @@ import (
 	"syscall"
 	"unsafe"
 
+	"github.com/Mr-ShiHuaYu/go-sciter"
 	"github.com/lxn/win"
-	"github.com/sciter-sdk/go-sciter"
 )
 
 var (

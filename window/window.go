@@ -1,8 +1,9 @@
 package window
 
 import (
-	"github.com/sciter-sdk/go-sciter"
 	"runtime"
+
+	"github.com/Mr-ShiHuaYu/go-sciter"
 )
 
 type Window struct {
@@ -15,7 +16,7 @@ func (w *Window) run() {
 }
 
 // https://github.com/golang/go/wiki/LockOSThread
-// https://github.com/sciter-sdk/go-sciter/issues/201
+// https://github.com/Mr-ShiHuaYu/go-sciter/issues/201
 func init() {
 	runtime.LockOSThread()
 }
