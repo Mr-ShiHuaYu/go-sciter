@@ -1,0 +1,56 @@
+<style src="../css/common.css"></style>
+<script src="../js/common.js"></script>
+<script>
+    function loadFile(url) {
+        Window.this.xcall("loadFile", url);
+    }
+
+    // 统一处理按钮事件,注意选择器必须逐级向下，不能跳级
+    document.on("click", "ul#navMenu > li > menu > li", function (evt, li) {
+        let src = li.attributes["src"];
+        let id = li.attributes["id"];
+        let url = src;
+        if (url == "" || url == undefined) {
+            url = id;
+        }
+        if(!isStrEmpty(url)){
+            url ="sample/"+url+".html"
+            loadFile(url);
+        }
+    });
+
+</script>
+<ul id="navMenu" class="menu-bar">
+    <li>文件
+        <menu>
+            <li>关闭</li>
+        </menu>
+    </li>
+    <li>示例
+        <menu>
+            <li #helloworld src="index">HelloWorld</li>
+            <li #custom-header>查看自定义标题</li>
+            <li #li>按钮与弹窗</li>
+            <li #constant>常量</li>
+            <li #clipboard>剪切板示例</li>
+            <li #file>选择文件/目录</li>
+            <li #callback>Go与JS互相调用</li>
+            <li #trayIcon>托盘图标</li>
+            <li #icons>icon示例</li>
+            <li #layout>Layout布局示例</li>
+            <li #grid>Grid布局示例</li>
+            <li #collapse>折叠面板collapse示例</li>
+            <li #form>form示例</li>
+            <li #zip>Zip示例</li>
+            <li #folder>Folder示例</li>
+            <li #menu>Menu菜单示例</li>
+            <li #select-tree>Tree示例</li>
+        </menu>
+    </li>
+    <li>帮助
+        <menu>
+            <li>更新版本</li>
+            <li>关于</li>
+        </menu>
+    </li>
+</ul>

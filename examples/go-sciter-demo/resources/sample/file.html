@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" window-resizable="true" window-frame="standard">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>选择文件/目录</title>
+    <style src="../css/common.css"></style>
+    <script src="../js/fileDropZone.js"></script>
+    <script src="../js/common.js"></script>
+    <style>
+        input {
+            width: 50%;
+        }
+
+        div {
+            margin-top: 8;
+        }
+
+        div.file-drop-zone {
+            size: 200px;
+            color: gray;
+            border: 4px dashed;
+            vertical-align: middle;
+            text-align: center;
+            margin: 1em;
+        }
+
+        div.file-drop-zone.active-target {
+            background: gold;
+        }
+    </style>
+    <script>
+        document.on("click", "button#file", function () {
+            // 取消或关闭为null
+            let r = Window.this.selectFile({
+                mode: "open", // 保存："save"|打开："open"|打开多个："open-multiple"
+                filter: "HTML File (*.htm,*.html)|*.html;*.htm|All Files (*.*)|*.*", // 过滤显示的文件，单个格式："title|ext1;ext2"，多个之间以"|"分隔。
+                caption: "选择文件MT",
+                // path:__DIR__,
+            });
+            Window.this.modal(<info>结果：{JSON.stringify(r)}</info>);
+        });
+
+        document.on("click", "button#mulFile", function () {
+            // 返回string数组[path1,path2]，如果选择一个文件，返回string，非string数组
+            let r = Window.this.selectFile({
+                mode: "open-multiple",
+                filter: "HTML File (*.htm,*.html)|*.html;*.htm|All Files (*.*)|*.*",
+                caption: "选择文件MT",
+                path: __DIR__,
+            });
+            Window.this.modal(<info>结果：{JSON.stringify(r)}</info>);
+        });
+
+        document.on("click", "button#saveFile", function () {
+            let r = Window.this.selectFile({
+                mode: "save",
+                filter: "HTML File (*.htm,*.html)|*.html;*.htm|All Files (*.*)|*.*",
+                extension: "md", // 默认的文件后缀,如果文件后缀缺省，则会默认追加的后缀
+                caption: "保存文件MT",
+                path: __DIR__,
+            });
+            Window.this.modal(<info>结果：{JSON.stringify(r)},{"r==null:" + (r == null)}</info>);
+        });
+
+        document.on("click", "button#dir", function () {
+            // 取消或关闭为""
+            let r = Window.this.selectFolder({
+                caption: "请选择目录MT",
+                path: __DIR__,
+            });
+            Window.this.modal(<info>结果：{JSON.stringify(r)},{"r=='':" + (r == "")}</info>);
+        });
+
+        document.on("change", "div#fileDivZone", function (evt,element) {
+            showInfo(JSON.stringify(element));
+            showInfo(JSON.stringify(evt.data.detail));
+        });
+    </script>
+</head>
+
+<body>
+    <div>
+        <div>
+            <label>文件路径</label>
+            <input #inputFile type="text" class="dropZone" placeholder="请选择文件" />
+            <button #file>选择文件</button>
+        </div>
+        <div>
+            <label>文件路径</label>
+            <input #inputMulFile type="text" class="dropZone" placeholder="支持选择多个文件" />
+            <button #mulFile>选择多个文件</button>
+        </div>
+        <div>
+            <label>文件路径</label>
+            <input #inputSaveFile type="text" class="dropZone" placeholder="保存的文件" />
+            <button #saveFile>保存文件</button>
+        </div>
+        <div>
+            <label>目录路径</label>
+            <input #inputDir type="text" class="dropZone" placeholder="请选择目录" />
+            <button #dir>选择目录</button>
+        </div>
+        <div.file-drop-zone #fileDivZone class="dropZone">
+            Drop any file here
+        </div>
+    </div>
+</body>
+
+</html>

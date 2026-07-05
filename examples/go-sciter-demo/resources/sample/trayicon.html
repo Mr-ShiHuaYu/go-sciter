@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" window-resizable="true" window-frame="standard">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>trayIcon托盘图标</title>
+    <style src="../css/common.css"></style>
+    <script>
+        document.on("click", "button#btn_trayicon", async function () {
+            let r = Window.this.trayIcon({
+                image: await Graphics.Image.load(__DIR__ + "../images/umbrella-fill.svg"),
+                text: "I am trayIcon\ncreated at: " + new Date() // tip提示信息
+            });
+            Window.this.modal(<info caption="执行结果">
+                            <p>添加结果：{r}</p>
+                        </info>);
+        });
+
+        document.on("click", "button#btn_remove_trayicon", async function () {
+            let r = Window.this.trayIcon("remove");
+            Window.this.modal(<info caption="执行结果">
+                            <p>添加结果：{r}</p>
+                        </info>);
+        });
+        // 切换界面后，会无法监听点击事件，可以考虑做成全局
+        Window.this.on("trayiconclick", evt => {
+            if (evt.data.buttons == 2) // right button click
+            {
+                const { screenX, screenY } = evt.data;
+                const popup = new Window({
+                    type: Window.POPUP_WINDOW,
+                    html: <PopuMenuWindow />, // Note: use of VDOM as window content
+                    x: screenX,
+                    y: screenY,
+                    alignment: 2, // on top of x/y
+                    state: Window.WINDOW_SHOWN
+                });
+                popup.activate(true); // set focus and bring it to front
+            }
+        });
+
+        function revealWindow(evt) {
+            evt.target.window.close(); // close popup window this menu item is in
+            Window.this.state = Window.WINDOW_SHOWN;
+            Window.this.activate(); // 显示
+        }
+
+        function showDialog(evt) {
+            evt.target.window.close(); // close popup window this menu item is in
+            Window.this.modal(<info>Hi from menu</info>);
+        }
+
+        function getOutOfHere(evt) {
+            evt.target.window.close(); // close popup window this menu item is in
+            // exiting the application
+            Window.this.trayIcon("remove");
+            Window.this.close(); // close this (host) window
+        }
+
+        function PopuMenuWindow(props, kids) {
+
+            function onWindowActivate(evt) {
+                if (!evt.reason)
+                    this.close(); // the window has lost the focus
+            }
+
+            return <html window-frame="solid-with-shadow"
+                window-width="max-content"
+                window-height="max-content"
+                window-onactivate={onWindowActivate}>
+                <style src={__DIR__ + "menu-window-style.css"} />
+                <body>
+                    <menu.popup.visible>
+                        <li onClick={revealWindow}>打开主窗口</li>
+                        <li onClick={showDialog}>设置</li>
+                        <li onClick={getOutOfHere}>退出</li>
+                    </menu>
+                </body>
+            </html>;
+        }
+    </script>
+</head>
+
+<body>
+    <div>
+        <button #btn_trayicon>添加托盘图标</button>
+        <button #btn_remove_trayicon>移除托盘图标</button>
+    </div>
+    <div #content>
+    </div>
+</body>
+
+</html>

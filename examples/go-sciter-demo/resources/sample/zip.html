@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" window-resizable="true" window-frame="standard">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Zip示例</title>
+    <style src="../css/common.css"></style>
+    <script src="../js/fileDropZone.js"></script>
+    <script src="../js/common.js"></script>
+    <script type="module">
+        import * as sctr from "@sciter";
+        let zip = null;
+        document.on("click", "button#show", function () {
+            tryCatchAsync(function () {
+                let url = document.$("#zipFile").value;
+                let pwd = document.$("#zipFilePwd").value;
+                if (isStrEmpty(pwd)) {
+                    zip = Zip.openFile(url);
+                } else {
+                    zip = Zip.openFile(url, pwd);
+                }
+
+                let content = "";
+                // showInfo("num="+zip.length);
+                for (const item of zip) {
+                    content = content + "<option key=1 value='" + item.path + "'>" + item.path + "</option>";
+                }
+                // showInfo(content);
+                document.$("#content").innerHTML = content;
+            });
+        });
+
+        document.on("change", "select#content", function (e, select) {
+            tryCatchAsync(function () {
+                for (const item of zip) {
+                    if (item.path == select.value) {
+                        document.$("#fileContent").innerText = sctr.decode(item.data, "utf-8");
+                    }
+                }
+            });
+        });
+
+    </script>
+    <style>
+        body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div
+        style="flow: grid( 1 1,2 3);flow-columns: 200px '*';flow-rows: 100px '*';height: '*';border-spacing: 3px;padding: 3px;">
+        <div>
+            <p>备注：不支持zip中包含中文的路径，会显示乱码。</p>
+
+            <input type="text" #zipFile style="width: 60%;" class="dropZone" />
+            <input type="text" #zipFilePwd style="width: 200;" placeholder="zip密码" />
+            <button #show>查看</button>
+        </div>
+        <select|list #content style="height: '*';width: '*';"></select>
+        <textarea #fileContent style="height: '*';width: '*';"></textarea>
+    </div>
+</body>
+
+</html>

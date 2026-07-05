@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" window-resizable="true" window-frame="standard">
+<head>
+    <meta charset="UTF-8"/>
+    <title>按钮事件与弹窗</title>
+</head>
+<style src="../css/common.css"></style>
+<script>
+    document.on("click", "button#btnInfoSimple", function () {
+        Window.this.modal(<info>这是按钮1的消息弹窗-btnInfoSimple</info>);
+    })
+    document.on("click", "button#btnInfo", function () {
+        let content = "变量参数";
+        let title = "-变量title";
+        let object = {name: "mt", age: 18};
+        // catption如果引入变量，必须使用``，否则以文字形式显示,为了IDE不报错,外面套个{}
+        let r = Window.this.modal(<info caption={`这是标题${title}`} resizable="true">
+            <content>
+                这是按钮1的消息弹窗：{content}<br/>
+                json:{JSON.stringify(object)}
+            </content>
+            <buttons>
+                <button id="yes" role="default-button">确定</button>
+            </buttons>
+        </info>);
+        Window.this.modal(<info>窗口返回结果为按钮id：{r},{r == undefined}</info>);
+    })
+
+    document.on("click", "button#btnWarn", function () {
+        Window.this.modal(<alert>这是按钮2的警告弹窗</alert>);
+    });
+
+    document.on("click", "button#btnError", function () {
+        Window.this.modal(<error>这是按钮2的错误弹窗</error>);
+    });
+
+    document.on("click", "button#btnQuestion", function () {
+        let r = Window.this.modal(<question caption="你有什么疑问">
+            <content>Be or not to be?</content>
+            <buttons>
+                <button id="yesA" role="default-button">确定</button>
+                <button id="no" role="cancel-button">取消</button>
+            </buttons>
+        </question>);
+        // 点击X关闭返回为undefined
+        Window.this.modal(<info>窗口返回结果为按钮id：{r},{r == undefined}</info>);
+    });
+
+    function openModal(url, showResult = false) {
+        let r = Window.this.modal(new Window({
+            url: url,
+            width: 800,
+            height: 600,
+        }));
+        if (showResult) {
+            // 返回结果通过close("返回结果")传递回来
+            Window.this.modal(<info>窗口返回结果：{r}</info>);
+        }
+    }
+
+    document.on("click", "button#btnCustom", function () {
+        openModal("sample/custom-header.html", true);
+    });
+
+    document.on("click", "button#btn-grid", function () {
+        openModal("sample/grid.html");
+    });
+
+    document.on("click", "button#btn-layout", function () {
+        openModal("sample/layout.html");
+    });
+</script>
+<body>
+<div style="flow:horizontal-wrap;height: '*';border-spacing:6px;">
+    <button #btnInfo>消息Info弹窗（完整）按钮</button>
+    <button #btnInfoSimple>消息Info弹窗（精简）按钮</button>
+    <button id="btnWarn">警告Alert弹窗按钮</button>
+    <button id="btnError">错误Error弹窗按钮</button>
+    <button id="btnQuestion">询问Question弹窗按钮</button>
+    <button #btnCustom>自定义弹窗按钮</button>
+    <button #btn-grid>Grid弹窗按钮</button>
+    <button #btn-layout>layout弹窗按钮</button>
+</div>
+</body>

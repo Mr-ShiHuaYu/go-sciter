@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<html lang="en" window-resizable="true" window-frame="standard">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Go与JS互相调用</title>
+    <script src="../js/common.js"></script>
+    <style src="../css/common.css"></style>
+    <script>
+        document.on("click", "button#btn_exec", function () {
+            tryCatch(() => {
+                let result = Window.this.xcall("execNativeFunc", "just do it", 10086);
+                document.$("div#content").append(<div>{JSON.stringify(result, null, 2)}</div>);
+            });
+        });
+
+        document.on("click", "button#btn_exec_callback", function () {
+            tryCatch(() => {
+                let result = Window.this.xcall("execJsCallback", function (content) {
+                    document.$("div#content").append(<div>JS回调，GO调用输出结果：{JSON.stringify(content, null, 2)}</div>);
+                });
+            });
+        });
+
+        document.on("click", "button#btn_exec_return_callback", function () {
+            tryCatch(() => {
+                let result = Window.this.xcall("execReturnNativeCallback");
+                result = result.f("STRING",1,3.14); // 调用Native回调方法
+                document.$("div#content").append(<div>返回GO回调，GO回调返回结果：{JSON.stringify(result, null, 2)}</div>);
+            });
+        });
+
+    </script>
+</head>
+
+<body>
+    <div>
+        <button #btn_exec>调用GO方法</button>
+        <button #btn_exec_callback>调用GO方法,传入JS回调方法</button>
+        <button #btn_exec_return_callback>调用GO方法，返回Go回调方法</button>
+    </div>
+    <div #content>
+    </div>
+
+</body>
+
+</html>

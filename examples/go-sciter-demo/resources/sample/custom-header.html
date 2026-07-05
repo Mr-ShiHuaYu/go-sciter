@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" window-resizable="true" window-frame="extended">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>自定义窗口标题栏</title>
+    <script>
+        document.on("click", "window-button[role='window-close']", function () {
+            Window.this.close("return A"); 
+        });
+    </script>
+    <style>
+        html{
+            border: 1px solid #1677ff;
+        }
+    </style>
+</head>
+
+<header style="background-color:#1677ff;height: 80px;vertical-align: middle;">
+    <icon|calendar role="window-icon" style="size:40px;color: white;" />
+    <window-caption role="window-caption"
+        style="color: white;font-size: 24px;width: 85%;height:50px;padding-top: 15px;left:75;letter-spacing: 2px;font-weight: 500;">
+        自定义窗口标题栏
+    </window-caption>
+    <window-buttons style="top:32;right:25;position: absolute;">
+        <window-button role="window-close">
+            <icon|window-close style="size:24px;"/>
+        </window-button>
+    </window-buttons>
+</header>
+
+<body>
+    <h1 style="height: 200px;background: red;">
+        内容
+    </h1>
+</body>
+
+</html>

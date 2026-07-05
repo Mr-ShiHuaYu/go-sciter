@@ -32,3 +32,4 @@ sciter-sdk*/
 .idea
 include6/
 .trae/
+*.sum

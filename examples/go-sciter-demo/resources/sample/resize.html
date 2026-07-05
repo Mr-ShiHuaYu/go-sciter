@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" window-resizable="true">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>设置窗口大小</title>
+    <script>
+        document.on("ready",function(){
+            // 获取屏幕尺寸
+            var [sx, sy, sw, sh] = Window.this.screenBox("workarea", "xywh");
+            // 设置窗体大小: 
+            const w = 600; 
+            const h = 450; 
+            // 移动窗体到屏幕中心
+            Window.this.move(sx + (sw - w) / 2, sy + (sh - h) / 2, w, h);
+        });
+    </script>
+</head>
+
+<body>
+    
+</body>
+
+</html>

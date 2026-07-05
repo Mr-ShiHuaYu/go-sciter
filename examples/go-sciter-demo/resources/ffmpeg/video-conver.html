@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" window-resizable="true" window-frame="standard">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>视频格式转换</title>
+    <style src="../css/common.css"></style>
+    <style>
+        input {
+            width: 60%;
+        }
+
+        .imageDiv {
+            height: '*';
+            width: 100%;
+            flow: horizontal-wrap;
+            border-spacing: 2px;
+            padding: 2px;
+            overflow-y: scroll-indicator;
+        }
+
+        .imageDiv img {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <script src="../js/fileDropZone.js"></script>
+    <script src="../js/common.js"></script>
+    <script type="module">
+        import * as env from "@env";
+        import * as sctr from "@sciter";
+
+        document.on("click", "button#btn-ffmpeg", function () {
+            selectFile({
+                mode: "open",
+                filter: "exe (*.exe)|*.exe;",
+                caption: "选择FFmpeg文件",
+            }, "#ffmpegPath");
+        });
+        document.on("click", "button#btn-video", function () {
+            selectFile({
+                mode: "open",
+                caption: "选择视频",
+            }, "#inputVideo");
+        });
+
+        function callback(result){
+            showInfo(result);
+            document.$("#result").value = JSON.stringify(result, null, 2);
+        }
+        document.on("click", "button#btn-create-video", function () {
+            tryCatch(() => {
+                let ffmpegPath = document.$("#ffmpegPath").value;
+                let inputPath = document.$("#inputVideo").value;
+                let mode = document.$("#create-mode").value;
+                if (isStrEmpty(ffmpegPath)) {
+                    ffmpegPath = "ffmpeg";
+                }
+                let index = inputPath.lastIndexOf(".");
+                let outputPath = inputPath.substring(0, index) + "-output"
+                    + mode;
+                let list = ["-i", inputPath, outputPath];
+                
+                let r = Window.this.xcall("execCmdAsync",ffmpegPath,list.join(","));
+                // document.$("#result").value = JSON.stringify(r, null, 2);
+            });
+        });
+
+        // 通过Window.post(event)发送
+        sctr.onGlobalEvent("execCmdResult",function(evt){
+            tryCatch(()=>{
+                document.$("#result").value = JSON.stringify(evt.data, null, 2);
+                showInfo(evt.data);
+            });
+        });
+
+    </script>
+</head>
+
+<body>
+    <frameset rows="180,*" style="background-color: white;">
+        <div>
+            <div>
+                <label>FFmpeg路径</label>
+                <input #ffmpegPath type="text" class="dropZone" placeholder="请选择FFMPEG文件" />
+                <button #btn-ffmpeg>选择FFMPEG</button>
+            </div>
+            <div>
+                <label>视频路径</label>
+                <input #inputVideo type="text" class="dropZone" placeholder="请选择视频" />
+                <button #btn-video>选择视频</button>
+            </div>
+            <div>
+                <select|switch #create-mode>
+                    <option selected value=".mp4">MP4</option>
+                    <option value=".mkv">MKV</option>
+                    <option value=".mov">MOV</option>
+                    <option value=".ts">TS</option>
+                    <option value=".flv">FLV</option>
+                    <option value=".webm">WEBM</option>
+                    <option value=".avi">AVI</option>
+                    <option value=".wmv">WMV</option>
+                    <option value=".3gp">3GP</option>
+                    <option value=".mpeg">MPEG</option>
+                    <option value=".vob">VOB</option>
+                    <option value=".mpg">MPG</option>
+                </select>
+            </div>
+            <div>
+                <button #btn-create-video>生成视频</button>
+            </div>
+        </div>
+        <textarea #result style="height: '*';width: 100%;"></textarea>
+    </frameset>
+
+</body>
+
+</html>

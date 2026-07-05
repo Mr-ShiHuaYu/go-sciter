@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" window-resizable="true" window-frame="standard">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Form示例</title>
+    <style src="../css/common.css"></style>
+    <script src="../js/fileDropZone.js"></script>
+    <script src="../js/common.js"></script>
+    <style>
+        form {
+            size: "*";
+            padding: 8;
+            flow: row(label, select input div textarea button);
+            border-spacing: 6;
+        }
+
+        form>label {
+            padding: 4;
+            white-space: nowrap;
+            horizontal-align: right;
+        }
+
+        label[for] { text-decoration:underline; cursor:pointer; }
+        select {height: min-content;}
+    </style>
+    <script>
+        document.on("change","form", function(event,form) {
+            tryCatchAsync(function(){
+                document.$("textarea#jsonContent").value = JSON.stringify(form.value,null,"  "); 
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <frameset cols="*,*">
+        <form style="background-color: white;">
+            <label>姓名</label>
+            <input|text(name) value="mt" />
+
+            <label>年龄</label>
+            <input|integer(age) value="18" />
+
+            <label>密码</label>
+            <input|password(passWord) />
+
+            <label for=checkboxButton>多选框</label>
+            <button|checkbox(checkboxButton) value="checked">Checkbox</button>
+
+            <label>单选按钮</label>
+            <div>
+                <button|radio(radioGroup) value="1" checked>Option 1</button>
+                <button|radio(radioGroup) value="2">Option 2</button>
+                <button|radio(radioGroup) value="3">Option 3</button>
+            </div>
+
+            <label>性别</label>
+            <div>
+                <select|switch(sex)>
+                        <option selected value="boy">男孩</option>
+                        <option value="girl">女孩</option>
+                </select>
+            </div>
+
+            <label>喜欢颜色</label>
+            <div style="flow:horizontal-wrap;">
+                <select(color)>
+                    <option value="red" selected>红色</option>
+                    <option value="green">绿色</option>
+                    <option value="blue">蓝色</option>
+                </select>
+                </div>
+
+            <label>喜欢颜色list</label>
+            <div style="flow:horizontal-wrap;">
+                <select|list(listcolor)>
+                    <option value="red" selected>红色</option>
+                    <option value="green">绿色</option>
+                    <option value="blue">蓝色</option>
+                </select>
+                <select|list multiple="checkmarks" name="listmulcolormark">
+                    <option value="red" selected>红色</option>
+                    <option value="green">绿色</option>
+                    <option value="blue">蓝色</option>
+                </select>
+            </div>
+            
+            <label>喜欢颜色tree</label>
+            <div style="flow:horizontal-wrap;">
+                <select|tree(treecolor)>
+                     <option expanded>
+                        <caption>Group A</caption>
+                        <option value="red" selected>红色</option>
+                    </option>
+                    <option expanded>
+                        <caption>Group B</caption>
+                        <option value="green2">绿色</option>
+                        <option value="blue3">蓝色</option>
+                    </option>
+                </select>
+                <select|tree multiple="checkmarks" name="treemulcolormark">
+                    <option expanded>
+                        <caption>Group A</caption>
+                        <option value="red" selected>红色</option>
+                    </option>
+                    <option expanded>
+                        <caption>Group B</caption>
+                        <option value="green2">绿色</option>
+                        <option value="blue3">蓝色</option>
+                    </option>
+                </select>
+            </div>
+
+            <label>描述信息</label>
+            <input|text(description) value="描述信息 ...." />
+        </form>
+        <textarea #jsonContent style="height: '*';width: '*';"></textarea>
+    </frameset>
+
+</body>
+
+</html>
