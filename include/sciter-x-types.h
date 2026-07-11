@@ -44,8 +44,8 @@
  * rely on any outer #ifdef block, safe to copy/move this snippet anywhere):
  *   (A) __cplusplus        is  NOT defined                       (C++ guard)
  *   (B) __STDC_VERSION__   is  NOT defined  OR  is < C11        (user's guard)
- *   (C) __CHAR16_TYPE__    is  NOT defined                       (compiler builtin)
- * Only when ALL THREE are true we provide our own fallback typedefs.
+ *   (C) __CHAR16_TYPE__    is  NOT defined                       (compiler
+ * builtin) Only when ALL THREE are true we provide our own fallback typedefs.
  * ---------------------------------------------------------------- */
 #if !defined(__cplusplus) &&                                                   \
     (!defined(__STDC_VERSION__) || __STDC_VERSION__ < 201112L) &&              \
@@ -132,32 +132,51 @@ typedef int SBOOL;
 #if defined(WINDOWS)
 
 // ============================================================
-// Windows XP (SP3) Target — ALWAYS ON, default for every Windows build
+// Windows version floor: ONLY the 32-bit build is locked to Windows XP.
 // ============================================================
-// Force _WIN32_WINNT=0x0501 BEFORE #include <windows.h> — CRITICAL because:
+// Rationale (matches go-sciter's XP compatibility story):
 //
-// 1. Prevents modern MinGW/w64devkit headers from declaring / linking Vista+
-//    only APIs (would cause "ordinal not found" / "entry point missing" errors
-//    on XP at EXE load time).  Keeps this forever = zero risk of accidentally
-//    introducing a Vista+ import during maintenance.
+//   * 32-bit Windows (_WIN64 is NOT defined):
+//       Force _WIN32_WINNT=0x0501 / WINVER=0x0501 / NTDDI_WINXPSP3.
+//       This is a HARD GUARD against accidentally linking Vista+ only APIs
+//       from modern w64devkit headers (those would cause "entry point
+//       missing" / "ordinal not found" popups when the EXE is loaded on XP).
 //
-// 2. Keeps Win32 struct sizes (OPENFILENAME, NOTIFYICONDATA, etc.) stable and
-//    matching what Sciter 6.0 DLL itself was built against (XP-compatible
-//    headers).
+//   * 64-bit Windows (_WIN64 is defined):
+//       DO NOT set ANY version macros at all — leave them up to the MinGW
+//       toolchain default / any explicit -D_WIN32_WINNT=... passed
+//       externally (e.g. CGO_CPPFLAGS, the caller's own build system).
+//       No artificial Win10 floor; 64-bit code should build for whatever
+//       Windows version the user targets.
 //
-// `#ifndef` guards ensure higher-level -D flags always take precedence.
+// The `#ifndef` guards + the 32-bit-only inner `#ifndef _WIN64` guard together
+// mean: external -D flags ALWAYS win (for both bitnesses), and for 64-bit
+// builds the header NEVER overrides the toolchain default.
+//
+// For non-Windows builds (Linux, macOS, iOS, Android) the whole
+// `#if defined(WINDOWS)` block is skipped entirely (line 132 above),
+// so NONE of these _WIN32_* / WINVER macros are ever defined on
+// those platforms — cross-platform buildability is preserved.
 // ============================================================
 #ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x0501 // Windows XP
+#ifndef _WIN64
+#define _WIN32_WINNT 0x0501 // Windows XP (32-bit only)
+#endif
 #endif
 #ifndef WINVER
-#define WINVER 0x0501 // Windows XP
+#ifndef _WIN64
+#define WINVER 0x0501 // Windows XP (32-bit only)
+#endif
 #endif
 #ifndef NTDDI_VERSION
-#define NTDDI_VERSION NTDDI_WINXPSP3
+#ifndef _WIN64
+#define NTDDI_VERSION NTDDI_WINXPSP3 // XP SP3 (32-bit only)
+#endif
 #endif
 #ifndef _WIN32_IE
-#define _WIN32_IE 0x0603 // Shell/common-controls (XP SP3)
+#ifndef _WIN64
+#define _WIN32_IE 0x0603 // Shell/common-controls XP SP3 (32-bit only)
+#endif
 #endif
 
 // Also keep WIN32_LEAN_AND_MEAN to speed up builds and avoid

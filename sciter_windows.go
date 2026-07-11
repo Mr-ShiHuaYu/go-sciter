@@ -14,8 +14,8 @@ package sciter
 // during Sciter initialization in the Go/CGO environment.
 #cgo windows,386 CFLAGS: -Iinclude -DWIN32_LEAN_AND_MEAN
 #cgo windows,amd64 CFLAGS: -Iinclude -DWIN32_LEAN_AND_MEAN
-#cgo windows,386 LDFLAGS: -L${SRCDIR} -lsciter
-#cgo windows,amd64 LDFLAGS: -L${SRCDIR} -lsciter
+#cgo windows,386 LDFLAGS: -L${SRCDIR} -lsciter32
+#cgo windows,amd64 LDFLAGS: -L${SRCDIR} -lsciter64
 // Generic fallback CFLAGS for other cgo invocations.
 #cgo CFLAGS: -Iinclude
 #include "sciter-x.h"
